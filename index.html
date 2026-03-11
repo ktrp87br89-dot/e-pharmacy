@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบิกยาพนักงาน (e-Pharmacy)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f766e; 
+            --primary-hover: #115e59;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-color: #ef4444;
+            --edit-color: #f59e0b;
+        }
+        body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; position: relative; }
+        .header { background-color: var(--primary-color); color: white; padding: 25px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; }
+        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        .content { padding: 30px 25px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-family: 'Prompt', sans-serif; font-size: 14px; transition: all 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1); }
+        
+        .medicine-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .medicine-card { display: flex; align-items: center; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; background: #fafafa; }
+        .medicine-card img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; margin-right: 15px; border: 1px solid #eee; }
+        .medicine-info { flex-grow: 1; }
+        .medicine-name { font-weight: 500; font-size: 15px; }
+        .medicine-stock { font-size: 12px; color: var(--text-muted); }
+        .medicine-qty { width: 80px !important; text-align: center; }
+        
+        .btn { width: 100%; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Prompt', sans-serif; }
+        .btn-submit { background-color: var(--primary-color); }
+        .btn-submit:hover { background-color: var(--primary-hover); }
+        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        
+        .admin-footer { text-align: center; padding: 15px; border-top: 1px solid var(--border-color); background: #f9fafb; }
+        .admin-link { color: var(--text-muted); font-size: 13px; text-decoration: none; cursor: pointer; }
+        .admin-link:hover { color: var(--primary-color); }
+        
+        #admin-login-view, #admin-dashboard-view { display: none; }
+        .loading-text { text-align: center; padding: 20px; color: var(--text-muted); font-size: 14px; }
+
+        /* สไตล์พิเศษสำหรับหน้าแอดมิน */
+        .admin-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .admin-list-item { display: flex; flex-direction: column; padding: 15px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: white; }
+        .admin-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .action-btns { display: flex; gap: 8px; }
+        .btn-small { padding: 6px 10px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; color: white; font-family: 'Prompt'; }
+        .btn-edit { background-color: var(--edit-color); }
+        .btn-delete { background-color: var(--danger-color); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="user-view">
+            <div class="header">
+                <h1>ระบบเบิกยาพนักงาน</h1>
+                <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อดำเนินการเบิกยา</p>
+            </div>
+            
+            <div class="content">
+                <form id="medicineForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label>ชื่อ-นามสกุล *</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>ชื่อเล่น *</label>
+                            <input type="text" id="nickName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ตำแหน่ง *</label>
+                            <input type="text" id="position" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>สังกัด / แผนก *</label>
+                        <select id="department" required onchange="checkDepartment()">
+                            <option value="">-- กรุณาเลือกแผนก --</option>
+                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 1 A,B,C">ประกันอุบัติเหตุส่วนบุคคล PA 1 A,B,C</option>
+                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 1 D">ประกันอุบัติเหตุส่วนบุคคล PA 1 D</option>
+                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 A">ประกันอุบัติเหตุส่วนบุคคล PA 2 A</option>
+                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 B">ประกันอุบัติเหตุส่วนบุคคล PA 2 B</option>
+                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 C">ประกันอุบัติเหตุส่วนบุคคล PA 2 C</option>
+                            <option value="ประกันสุขภาพ และ โรคร้ายแรง HEALTH">ประกันสุขภาพ และ โรคร้ายแรง HEALTH</option>
+                            <option value="ประกันรถยนต์ MOTOR">ประกันรถยนต์ MOTOR</option>
+                            <option value="Retail 1 สินค้า /สินค้าอุปโภคบริโภค">Retail 1 สินค้า /สินค้าอุปโภคบริโภค</option>
+                            <option value="Retail 2 สินค้า /สินค้าอุปโภคบริโภค">Retail 2 สินค้า /สินค้าอุปโภคบริโภค</option>
+                            <option value="Retail 3 สินค้า /สินค้าอุปโภคบริโภค">Retail 3 สินค้า /สินค้าอุปโภคบริโภค</option>
+                            <option value="Retail 4 สินค้า /สินค้าอุปโภคบริโภค">Retail 4 สินค้า /สินค้าอุปโภคบริโภค</option>
+                            <option value="Back Office">Back Office</option>
+                            <option value="อื่นๆ">แผนกอื่นๆระบุ:</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="otherDeptDiv" style="display: none;">
+                        <label>ระบุแผนกของคุณ *</label>
+                        <input type="text" id="otherDepartment">
+                    </div>
+                    <div class="form-group">
+                        <label>อาการเบื้องต้น *</label>
+                        <textarea id="symptoms" rows="2" required></textarea>
+                    </div>
+                    <label>รายการยาที่ต้องการเบิก (ใส่จำนวนที่ต้องการ)</label>
+                    <div class="medicine-list" id="medicineListContainer">
+                        <div class="loading-text">⏳ กำลังโหลดรายการยาจากคลัง...</div>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-submit">ยืนยันการเบิกยา</button>
+                </form>
+            </div>
+            <div class="admin-footer">
+                <a class="admin-link" onclick="switchView('admin-login-view')">🔒 เข้าสู่ระบบผู้ดูแลระบบ (Admin)</a>
+            </div>
+        </div>
+
+        <div id="admin-login-view">
+            <div class="header" style="background-color: #374151;">
+                <h1>Admin Login</h1>
+                <p>ระบบจัดการสต๊อกยา</p>
+            </div>
+            <div class="content">
+                <div class="form-group">
+                    <label>รหัสผ่าน</label>
+                    <input type="password" id="adminPass" placeholder="กรอกรหัสผ่านเพื่อเข้าสู่ระบบ" onkeypress="if(event.key === 'Enter') loginAdmin()">
+                </div>
+                <button onclick="loginAdmin()" class="btn btn-submit" style="background-color: #374151;">เข้าสู่ระบบ</button>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a class="admin-link" onclick="switchView('user-view')">← กลับไปหน้าเบิกยา</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-dashboard-view">
+            <div class="header" style="background-color: #374151;">
+                <h1>จัดการสต๊อกยา</h1>
+                <p>ยินดีต้อนรับ Admin</p>
+            </div>
+            <div class="content">
+                
+                <div class="admin-box">
+                    <h3 style="margin-top:0; font-size: 16px; color: #1f2937;" id="adminFormTitle">➕ เพิ่มรายการยาใหม่</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>รหัสยา (เช่น M01)</label>
+                            <input type="text" id="medId" placeholder="ห้ามซ้ำกับที่มี">
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อยา</label>
+                            <input type="text" id="medName">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>หน่วย (เช่น เม็ด, ซอง)</label>
+                            <input type="text" id="medUnit">
+                        </div>
+                        <div class="form-group">
+                            <label>จำนวนสต๊อก</label>
+                            <input type="number" id="medStock" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>URL รูปภาพ (ถ้ามี)</label>
+                        <input type="text" id="medImage" placeholder="https://...">
+                    </div>
+                    <div class="action-btns">
+                        <button onclick="saveMedicineAdmin()" id="btnSaveAdmin" class="btn btn-submit" style="background-color: #059669;">💾 บันทึกข้อมูลยา</button>
+                        <button onclick="clearAdminForm()" class="btn" style="background-color: #9ca3af; width: 30%;">ล้างค่า</button>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 16px;">📦 รายการยาในคลัง</h3>
+                <div id="adminStockContainer">
+                    <div class="loading-text">⏳ กำลังโหลดสต๊อกยา...</div>
+                </div>
+
+                <button onclick="switchView('user-view')" class="btn" style="background-color: #ef4444; margin-top: 30px;">🚪 ออกจากระบบ</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ⚠️ วาง URL Web App อันเดิมของคุณที่นี่ครับ
+        const API_URL = "https://script.google.com/macros/s/AKfycbz4FjYkhq97CY8HNarHLArNX46Ye373ybRcXqdL5THySaT29ut0797YbMjamZeqaADZ/exec";
+        
+        let availableMeds = []; 
+
+        window.onload = function() { fetchMedicines(); };
+
+        function fetchMedicines() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    availableMeds = data;
+                    renderMedicines(data);
+                    renderAdminStock(data);
+                })
+                .catch(error => console.error("Error fetching meds:", error));
+        }
+
+        // --- ส่วนของพนักงาน ---
+        function renderMedicines(meds) {
+            const container = document.getElementById("medicineListContainer");
+            container.innerHTML = ""; 
+            if (meds.length === 0) { container.innerHTML = '<div class="loading-text">ไม่มีรายการยาในสต๊อก</div>'; return; }
+
+            meds.forEach((med) => {
+                const imgUrl = med.image ? med.image : `https://via.placeholder.com/100?text=${med.name}`;
+                const isOutOfStock = med.stock <= 0;
+                container.innerHTML += `
+                    <div class="medicine-card" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
+                        <img src="${imgUrl}" alt="${med.name}">
+                        <div class="medicine-info">
+                            <div class="medicine-name">${med.name}</div>
+                            <div class="medicine-stock" style="${isOutOfStock ? 'color: red;' : ''}">คงเหลือ: ${med.stock} ${med.unit}</div>
+                        </div>
+                        <input type="number" class="medicine-qty med-input" data-name="${med.name}" data-unit="${med.unit}" min="0" max="${med.stock}" placeholder="จำนวน" ${isOutOfStock ? 'disabled' : ''}>
+                    </div>
+                `;
+            });
+        }
+
+        function submitForm(event) {
+            event.preventDefault(); 
+            const submitBtn = document.getElementById("submitBtn");
+            const inputs = document.querySelectorAll('.med-input');
+            let medsDataArray = [], medsSummaryText = [];
+
+            inputs.forEach(input => {
+                let qty = parseInt(input.value);
+                if (qty > 0) {
+                    let name = input.getAttribute('data-name');
+                    let unit = input.getAttribute('data-unit');
+                    medsDataArray.push({ name: name, qty: qty });
+                    medsSummaryText.push(`${name}: ${qty} ${unit}`);
+                }
+            });
+
+            if (medsDataArray.length === 0) return alert("กรุณาระบุจำนวนยาที่ต้องการเบิกครับ");
+
+            const payload = {
+                action: "request_medicine", // บอกหลังบ้านว่านี่คือการเบิกยา
+                fullName: document.getElementById("fullName").value,
+                nickName: document.getElementById("nickName").value,
+                position: document.getElementById("position").value,
+                department: document.getElementById("department").value,
+                otherDepartment: document.getElementById("otherDepartment").value,
+                symptoms: document.getElementById("symptoms").value,
+                medsDataArray: medsDataArray,
+                medsSummary: medsSummaryText.join("\n")
+            };
+
+            submitBtn.innerText = "⏳ กำลังดำเนินการ...";
+            submitBtn.disabled = true;
+
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("✅ บันทึกการเบิกยาสำเร็จ!");
+                    document.getElementById("medicineForm").reset(); 
+                    checkDepartment(); fetchMedicines(); 
+                }
+            })
+            .finally(() => { submitBtn.innerText = "ยืนยันการเบิกยา"; submitBtn.disabled = false; });
+        }
+
+        // --- ส่วนของแอดมิน ---
+        function renderAdminStock(meds) {
+            const container = document.getElementById("adminStockContainer");
+            container.innerHTML = "";
+            meds.forEach(med => {
+                // ส่งข้อมูลยาเป็น JSON String ผ่าน dataset เพื่อให้ปุ่มแก้ไขดึงไปใช้ได้ง่าย
+                const medJson = JSON.stringify(med).replace(/'/g, "&#39;");
+                container.innerHTML += `
+                <div class="admin-list-item">
+                    <div class="admin-item-header">
+                        <div><b>[${med.id}] ${med.name}</b></div>
+                        <div class="action-btns">
+                            <button onclick='editMedicine(${medJson})' class="btn-small btn-edit">✏️ แก้ไข</button>
+                            <button onclick="deleteMedicine('${med.id}', '${med.name}')" class="btn-small btn-delete">🗑️ ลบ</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; color: #6b7280;">
+                        สต๊อก: <strong style="color:${med.stock <= 5 ? 'red' : 'green'};">${med.stock} ${med.unit}</strong>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // นำข้อมูลยามาใส่ในฟอร์มเพื่อเตรียมแก้ไข
+        function editMedicine(med) {
+            document.getElementById("adminFormTitle").innerText = "✏️ แก้ไขข้อมูลยา";
+            document.getElementById("medId").value = med.id;
+            document.getElementById("medId").readOnly = true; // ล็อกไม่ให้แก้รหัสยา
+            document.getElementById("medName").value = med.name;
+            document.getElementById("medUnit").value = med.unit;
+            document.getElementById("medStock").value = med.stock;
+            document.getElementById("medImage").value = med.image;
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // เลื่อนจอกลับขึ้นไปบนสุด
+        }
+
+        // ล้างฟอร์มแอดมิน
+        function clearAdminForm() {
+            document.getElementById("adminFormTitle").innerText = "➕ เพิ่มรายการยาใหม่";
+            document.getElementById("medId").value = "";
+            document.getElementById("medId").readOnly = false;
+            document.getElementById("medName").value = "";
+            document.getElementById("medUnit").value = "";
+            document.getElementById("medStock").value = "";
+            document.getElementById("medImage").value = "";
+        }
+
+        // บันทึก/อัปเดต ยา
+        function saveMedicineAdmin() {
+            const id = document.getElementById("medId").value;
+            const name = document.getElementById("medName").value;
+            if(!id || !name) return alert("กรุณากรอกรหัสยาและชื่อยาครับ");
+
+            const payload = {
+                action: "save_medicine",
+                med: {
+                    id: id,
+                    name: name,
+                    unit: document.getElementById("medUnit").value || "ชิ้น",
+                    stock: document.getElementById("medStock").value || 0,
+                    image: document.getElementById("medImage").value || ""
+                }
+            };
+
+            const btn = document.getElementById("btnSaveAdmin");
+            btn.innerText = "⏳ กำลังบันทึก..."; btn.disabled = true;
+
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    alert("✅ " + data.message);
+                    clearAdminForm();
+                    fetchMedicines(); // โหลดข้อมูลใหม่
+                }
+            })
+            .finally(() => { btn.innerText = "💾 บันทึกข้อมูลยา"; btn.disabled = false; });
+        }
+
+        // ลบยา
+        function deleteMedicine(medId, medName) {
+            if(!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบยา "${medName}" ออกจากระบบ?`)) return;
+
+            const payload = { action: "delete_medicine", medId: medId };
+
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    alert("🗑️ " + data.message);
+                    fetchMedicines(); 
+                }
+            });
+        }
+
+        // UI พื้นฐาน
+        function checkDepartment() {
+            const select = document.getElementById("department");
+            const otherDiv = document.getElementById("otherDeptDiv");
+            const otherInput = document.getElementById("otherDepartment");
+            if (select.value === "อื่นๆ") { otherDiv.style.display = "block"; otherInput.required = true; } 
+            else { otherDiv.style.display = "none"; otherInput.required = false; otherInput.value = ""; }
+        }
+
+        function switchView(viewId) {
+            document.getElementById("user-view").style.display = "none";
+            document.getElementById("admin-login-view").style.display = "none";
+            document.getElementById("admin-dashboard-view").style.display = "none";
+            document.getElementById(viewId).style.display = "block";
+            if (viewId === 'admin-dashboard-view') fetchMedicines();
+        }
+
+        function loginAdmin() {
+            const pass = document.getElementById("adminPass").value;
+            if (pass === "adminhr0208") {
+                document.getElementById("adminPass").value = ""; 
+                switchView("admin-dashboard-view");
+            } else {
+                alert("รหัสผ่านไม่ถูกต้อง");
+            }
+        }
+    </script>
+</body>
+</html>
