@@ -3,60 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเบิกยาพนักงาน (e-Pharmacy)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>ระบบเบิกยาสำหรับพนักงาน (e-Pharmacy) - Majestic Gold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0f766e; 
-            --primary-hover: #115e59;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-            --danger-color: #ef4444;
-            --edit-color: #f59e0b;
+            --primary-color: #D4AF37; 
+            --primary-hover: #B8860B; 
+            --secondary-color: #0F0F0F; 
+            --bg-color: #FBFBF9; 
+            --card-bg: #FFFFFF; 
+            --text-main: #1A1A1A; 
+            --text-muted: #7A6B53; 
+            --border-color: #E8D8BA; 
+            --danger-color: #8B0000; 
+            --success-color: #1A5A22; 
         }
         body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; position: relative; }
-        .header { background-color: var(--primary-color); color: white; padding: 25px 20px; text-align: center; }
-        .header h1 { margin: 0; font-size: 22px; font-weight: 600; }
-        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
-        .content { padding: 30px 25px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
-        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-family: 'Prompt', sans-serif; font-size: 14px; transition: all 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1); }
+        .app-container { width: 100%; max-width: 650px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); overflow: hidden; position: relative; border: 1px solid var(--border-color); }
         
-        .medicine-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
-        .medicine-card { display: flex; align-items: center; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; background: #fafafa; }
-        .medicine-card img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; margin-right: 15px; border: 1px solid #eee; }
-        .medicine-info { flex-grow: 1; }
-        .medicine-name { font-weight: 500; font-size: 15px; }
-        .medicine-stock { font-size: 12px; color: var(--text-muted); }
-        .medicine-qty { width: 80px !important; text-align: center; }
+        .header { background-color: var(--secondary-color); color: var(--primary-color); padding: 35px 20px; text-align: center; border-bottom: 4px solid var(--primary-color); position: relative; }
+        .admin-btn-top { position: absolute; top: 15px; right: 15px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 6px; font-family: 'Prompt'; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .admin-btn-top:hover { background: var(--primary-color); color: var(--secondary-color); font-weight: 600; }
+
+        .header h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .header p { margin: 8px 0 0; font-size: 14px; opacity: 0.8; font-weight: 300; letter-spacing: 1px; color: #E8D8BA; }
+        .content { padding: 35px 30px; }
         
-        .btn { width: 100%; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Prompt', sans-serif; }
-        .btn-submit { background-color: var(--primary-color); }
-        .btn-submit:hover { background-color: var(--primary-hover); }
-        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .section-title { font-size: 16px; font-weight: 600; color: var(--secondary-color); margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px; }
+        .section-title::before { content: "✦"; color: var(--primary-color); }
         
-        .admin-footer { text-align: center; padding: 15px; border-top: 1px solid var(--border-color); background: #f9fafb; }
-        .admin-link { color: var(--text-muted); font-size: 13px; text-decoration: none; cursor: pointer; }
-        .admin-link:hover { color: var(--primary-color); }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--text-main); }
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Prompt'; font-size: 14px; transition: 0.3s; background-color: #FFFFFF; color: var(--text-main); box-sizing: border-box;}
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15); }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .category-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .category-tab { padding: 8px 18px; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--text-muted); font-weight: 500; }
+        .category-tab:hover { border-color: var(--primary-color); color: var(--secondary-color); box-shadow: 0 4px 10px rgba(212, 175, 55, 0.1); }
+        .category-tab.active { background: var(--primary-color); color: var(--secondary-color); border-color: var(--primary-color); font-weight: 600; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); }
+        .category-tabs::-webkit-scrollbar { display: none; }
+
+        .item-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .item-card { display: flex; align-items: center; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; background: #FFFFFF; transition: all 0.3s; }
+        .item-card:hover { border-color: var(--primary-color); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.08); transform: translateY(-2px); }
+        .item-card img { width: 75px; height: 75px; object-fit: cover; border-radius: 6px; margin-right: 18px; border: 1px solid var(--border-color); padding: 2px; }
+        .item-info { flex-grow: 1; }
+        .item-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: var(--secondary-color); }
+        .item-stock { font-size: 13px; color: var(--text-muted); }
+        .item-qty { width: 90px !important; text-align: center; font-weight: 600; border-color: var(--border-color) !important; color: var(--secondary-color); background: #FDFDFB !important; }
+        .item-qty:focus { background: #FFF !important; }
+        
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Prompt'; transition: all 0.3s; letter-spacing: 0.5px; text-transform: uppercase; }
+        .btn-submit { background-color: var(--primary-color); color: var(--secondary-color); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .btn-submit:hover { background-color: var(--primary-hover); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); transform: translateY(-1px); }
+        .btn-submit:disabled { background-color: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
         
         #admin-login-view, #admin-dashboard-view { display: none; }
-        .loading-text { text-align: center; padding: 20px; color: var(--text-muted); font-size: 14px; }
+        .loading-text { text-align: center; padding: 20px; color: var(--primary-color); font-size: 14px; font-weight: 500; letter-spacing: 1px; }
 
-        /* สไตล์พิเศษสำหรับหน้าแอดมิน */
-        .admin-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .admin-list-item { display: flex; flex-direction: column; padding: 15px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: white; }
-        .admin-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .admin-box { background: #FFFFFF; border: 1px solid var(--border-color); padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .admin-list-item { display: flex; flex-direction: column; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; background: #FFFFFF; transition: 0.3s; }
+        .admin-list-item:hover { border-color: var(--primary-color); }
+        .admin-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .action-btns { display: flex; gap: 8px; }
-        .btn-small { padding: 6px 10px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; color: white; font-family: 'Prompt'; }
-        .btn-edit { background-color: var(--edit-color); }
+        
+        .btn-small { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; color: #FFFFFF; font-family: 'Prompt'; font-weight: 500; }
+        .btn-edit { background-color: var(--text-muted); }
+        .btn-edit:hover { background-color: var(--primary-color); color: var(--secondary-color); }
         .btn-delete { background-color: var(--danger-color); }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .history-text { font-size: 13px; color: var(--text-muted); white-space: pre-line; background: var(--bg-color); padding: 12px; border-radius: 6px; margin-top: 8px; border: 1px dashed var(--border-color); }
+        
+        .admin-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 20px; font-size: 14px; }
+        .admin-tab { flex: 1; text-align: center; padding: 12px 5px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: 0.3s; }
+        .admin-tab:hover { color: var(--primary-hover); }
+        .admin-tab.active { color: var(--secondary-color); border-bottom: 3px solid var(--primary-color); margin-bottom: -2px; }
+        
+        .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .report-table th { background: var(--secondary-color); color: var(--primary-color); padding: 14px 10px; font-weight: 500; letter-spacing: 0.5px; }
+        .report-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        .report-table tr:hover td { background: rgba(212, 175, 55, 0.03); }
+        .report-table tr:last-child td { border-bottom: none; }
+        
+        .summary-card { background: #FFFFFF; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .summary-card .label { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .summary-card .value { font-size: 28px; font-weight: 700; color: var(--primary-color); margin-top: 5px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
+        
+        .ai-box { background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%); color: var(--secondary-color); padding: 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid var(--primary-color); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -65,168 +99,241 @@
         
         <div id="user-view">
             <div class="header">
-                <h1>ระบบเบิกยาพนักงาน</h1>
-                <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อดำเนินการเบิกยา</p>
+                <button type="button" class="admin-btn-top" onclick="switchView('admin-login-view')">✦ ADMIN</button>
+                <h1>MAJESTIC PHARMACY</h1>
+                <p>ระบบเบิกยาสำหรับพนักงาน</p>
             </div>
             
             <div class="content">
                 <form id="medicineForm" onsubmit="submitForm(event)">
+                    
+                    <div class="section-title">ข้อมูลพนักงาน</div>
                     <div class="form-group">
                         <label>ชื่อ-นามสกุล *</label>
-                        <input type="text" id="fullName" required>
+                        <input type="text" id="fullName" required placeholder="ระบุชื่อ-นามสกุลผู้เบิก">
                     </div>
+                    
                     <div class="grid-2">
                         <div class="form-group">
                             <label>ชื่อเล่น *</label>
-                            <input type="text" id="nickName" required>
+                            <input type="text" id="nickName" required placeholder="ระบุชื่อเล่น">
                         </div>
                         <div class="form-group">
                             <label>ตำแหน่ง *</label>
-                            <input type="text" id="position" required>
+                            <input type="text" id="position" required placeholder="ระบุตำแหน่ง">
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label>สังกัด / แผนก *</label>
                         <select id="department" required onchange="checkDepartment()">
                             <option value="">-- กรุณาเลือกแผนก --</option>
-                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 1 A,B,C">ประกันอุบัติเหตุส่วนบุคคล PA 1 A,B,C</option>
-                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 1 D">ประกันอุบัติเหตุส่วนบุคคล PA 1 D</option>
-                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 A">ประกันอุบัติเหตุส่วนบุคคล PA 2 A</option>
-                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 B">ประกันอุบัติเหตุส่วนบุคคล PA 2 B</option>
-                            <option value="ประกันอุบัติเหตุส่วนบุคคล PA 2 C">ประกันอุบัติเหตุส่วนบุคคล PA 2 C</option>
-                            <option value="ประกันสุขภาพ และ โรคร้ายแรง HEALTH">ประกันสุขภาพ และ โรคร้ายแรง HEALTH</option>
-                            <option value="ประกันรถยนต์ MOTOR">ประกันรถยนต์ MOTOR</option>
-                            <option value="Retail 1 สินค้า /สินค้าอุปโภคบริโภค">Retail 1 สินค้า /สินค้าอุปโภคบริโภค</option>
-                            <option value="Retail 2 สินค้า /สินค้าอุปโภคบริโภค">Retail 2 สินค้า /สินค้าอุปโภคบริโภค</option>
-                            <option value="Retail 3 สินค้า /สินค้าอุปโภคบริโภค">Retail 3 สินค้า /สินค้าอุปโภคบริโภค</option>
-                            <option value="Retail 4 สินค้า /สินค้าอุปโภคบริโภค">Retail 4 สินค้า /สินค้าอุปโภคบริโภค</option>
-                            <option value="Back Office">Back Office</option>
-                            <option value="อื่นๆ">แผนกอื่นๆระบุ:</option>
+                            <option value="BACK OFFICE">BACK OFFICE</option>
+                            <option value="Telesale PA 1">Telesale PA 1</option>
+                            <option value="Telesale PA 2">Telesale PA 2</option>
+                            <option value="Telesale PA 3">Telesale PA 3</option>
+                            <option value="Telesale HEALTH">Telesale HEALTH</option>
+                            <option value="Telesale MOTOR 1">Telesale MOTOR 1</option>
+                            <option value="Telesale MOTOR 2">Telesale MOTOR 2</option>
+                            <option value="Telesale TRUE 1">Telesale TRUE 1</option>
+                            <option value="Telesale TRUE 2">Telesale TRUE 2</option>
+                            <option value="Telesale TRUE 3">Telesale TRUE 3</option>
+                            <option value="Telesale TRUE 4">Telesale TRUE 4</option>
+                            <option value="QC QA & Admin">QC QA & Admin</option>
+                            <option value="อื่นๆ">อื่นๆ (ระบุ)</option>
                         </select>
                     </div>
                     <div class="form-group" id="otherDeptDiv" style="display: none;">
-                        <label>ระบุแผนกของคุณ *</label>
-                        <input type="text" id="otherDepartment">
+                        <input type="text" id="otherDepartment" placeholder="พิมพ์ชื่อแผนก">
                     </div>
+
+                    <div class="section-title">อาการป่วยเบื้องต้น</div>
                     <div class="form-group">
-                        <label>อาการเบื้องต้น *</label>
-                        <textarea id="symptoms" rows="2" required></textarea>
+                        <textarea id="symptoms" rows="3" required placeholder="ระบุอาการของคุณ เช่น ปวดหัว, มีไข้, ปวดท้อง ฯลฯ"></textarea>
                     </div>
-                    <label>รายการยาที่ต้องการเบิก (ใส่จำนวนที่ต้องการ)</label>
-                    <div class="medicine-list" id="medicineListContainer">
-                        <div class="loading-text">⏳ กำลังโหลดรายการยาจากคลัง...</div>
+
+                    <div class="section-title">เลือกรายการยาที่ต้องการ</div>
+                    
+                    <div class="category-tabs" id="categoryTabs">
+                        <div class="category-tab active" onclick="filterCategory('all', this)">รวมทั้งหมด</div>
+                        <div class="category-tab" onclick="filterCategory('ปวด', this)">💊 ปวด/ไข้</div>
+                        <div class="category-tab" onclick="filterCategory('แพ้', this)">🤧 ภูมิแพ้/หวัด</div>
+                        <div class="category-tab" onclick="filterCategory('ท้อง', this)">กระเพาะ/ลำไส้</div>
+                        <div class="category-tab" onclick="filterCategory('แผล', this)">🩹 ทำแผล</div>
                     </div>
+
+                    <div class="item-list" id="itemListContainer">
+                        <div class="loading-text">✦ กำลังโหลดรายการยา...</div>
+                    </div>
+
                     <button type="submit" id="submitBtn" class="btn btn-submit">ยืนยันการเบิกยา</button>
                 </form>
-            </div>
-            <div class="admin-footer">
-                <a class="admin-link" onclick="switchView('admin-login-view')">🔒 เข้าสู่ระบบผู้ดูแลระบบ (Admin)</a>
             </div>
         </div>
 
         <div id="admin-login-view">
-            <div class="header" style="background-color: #374151;">
-                <h1>Admin Login</h1>
-                <p>ระบบจัดการสต๊อกยา</p>
+            <div class="header">
+                <h1>MAJESTIC ADMIN</h1>
+                <p>Pharmacy Management System</p>
             </div>
             <div class="content">
                 <div class="form-group">
                     <label>รหัสผ่าน</label>
-                    <input type="password" id="adminPass" placeholder="กรอกรหัสผ่านเพื่อเข้าสู่ระบบ" onkeypress="if(event.key === 'Enter') loginAdmin()">
+                    <input type="password" id="adminPass" placeholder="กรอกรหัสผ่านแล้วกด Enter" onkeypress="if(event.key === 'Enter') loginAdmin()">
                 </div>
-                <button onclick="loginAdmin()" class="btn btn-submit" style="background-color: #374151;">เข้าสู่ระบบ</button>
-                <div style="text-align: center; margin-top: 20px;">
-                    <a class="admin-link" onclick="switchView('user-view')">← กลับไปหน้าเบิกยา</a>
+                <button onclick="loginAdmin()" class="btn btn-submit">เข้าสู่ระบบ</button>
+                <div style="text-align: center; margin-top: 25px;">
+                    <a class="admin-link" style="color:var(--text-muted); cursor:pointer; font-size: 13px;" onclick="switchView('user-view')">← กลับไปหน้าทำรายการ</a>
                 </div>
             </div>
         </div>
 
         <div id="admin-dashboard-view">
-            <div class="header" style="background-color: #374151;">
-                <h1>จัดการสต๊อกยา</h1>
-                <p>ยินดีต้อนรับ Admin</p>
+            <div class="header">
+                <h1>PHARMACY DASHBOARD</h1>
+                <p>จัดการคลังยา ประวัติ และ AI Report</p>
             </div>
-            <div class="content">
+            
+            <div class="admin-tabs">
+                <div class="admin-tab active" id="tab-stock" onclick="switchAdminTab('stock')">📦 คลังยา</div>
+                <div class="admin-tab" id="tab-history" onclick="switchAdminTab('history')">📜 ประวัติ</div>
+                <div class="admin-tab" id="tab-report" onclick="switchAdminTab('report')">✦ รายงาน AI</div>
+            </div>
+
+            <div class="content" style="padding-top: 0;">
                 
-                <div class="admin-box">
-                    <h3 style="margin-top:0; font-size: 16px; color: #1f2937;" id="adminFormTitle">➕ เพิ่มรายการยาใหม่</h3>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>รหัสยา (เช่น M01)</label>
-                            <input type="text" id="medId" placeholder="ห้ามซ้ำกับที่มี">
+                <div id="admin-section-stock">
+                    <div class="admin-box">
+                        <h3 style="margin-top:0; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--secondary-color);" id="adminFormTitle">✦ เพิ่ม/แก้ไข รายการยา</h3>
+                        <div class="grid-2">
+                            <div class="form-group"><label>รหัสยา (เช่น M01)</label><input type="text" id="itemId"></div>
+                            <div class="form-group"><label>ชื่อยา (เช่น พอนสแตน แก้ปวด)</label><input type="text" id="itemName"></div>
                         </div>
-                        <div class="form-group">
-                            <label>ชื่อยา</label>
-                            <input type="text" id="medName">
+                        <div class="grid-2">
+                            <div class="form-group"><label>หน่วยนับ</label><input type="text" id="itemUnit" value="เม็ด"></div>
+                            <div class="form-group"><label>จำนวนสต๊อกรวม</label><input type="number" id="itemStock" min="0"></div>
                         </div>
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>หน่วย (เช่น เม็ด, ซอง)</label>
-                            <input type="text" id="medUnit">
-                        </div>
-                        <div class="form-group">
-                            <label>จำนวนสต๊อก</label>
-                            <input type="number" id="medStock" min="0">
+                        <div class="form-group"><label>URL รูปภาพ</label><input type="text" id="itemImage"></div>
+                        <div class="action-btns" style="margin-top: 15px;">
+                            <button onclick="saveItemAdmin()" id="btnSaveAdmin" class="btn btn-submit">💾 บันทึกข้อมูล</button>
+                            <button onclick="clearAdminForm()" class="btn" style="background-color: transparent; border: 1px solid var(--text-muted); width: 40%; color: var(--text-muted);">ล้างค่า</button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>URL รูปภาพ (ถ้ามี)</label>
-                        <input type="text" id="medImage" placeholder="https://...">
-                    </div>
-                    <div class="action-btns">
-                        <button onclick="saveMedicineAdmin()" id="btnSaveAdmin" class="btn btn-submit" style="background-color: #059669;">💾 บันทึกข้อมูลยา</button>
-                        <button onclick="clearAdminForm()" class="btn" style="background-color: #9ca3af; width: 30%;">ล้างค่า</button>
+                    <h3 style="font-size: 16px; color: var(--secondary-color);">📦 สต๊อกยาคงเหลือ</h3>
+                    <div id="adminStockContainer"></div>
+                </div>
+
+                <div id="admin-section-history" style="display: none;">
+                    <div class="admin-box">
+                        <h3 style="margin-top:0; font-size: 16px; color: var(--danger-color);">🚨 ตรวจสอบและยกเลิกบิล</h3>
+                        <div id="adminHistoryContainer"></div>
                     </div>
                 </div>
 
-                <h3 style="font-size: 16px;">📦 รายการยาในคลัง</h3>
-                <div id="adminStockContainer">
-                    <div class="loading-text">⏳ กำลังโหลดสต๊อกยา...</div>
+                <div id="admin-section-report" style="display: none;">
+                    <div class="admin-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="margin:0; font-size: 16px; color: var(--secondary-color);">✦ รายงานวิเคราะห์คลังยา</h3>
+                            <select id="reportMonthFilter" onchange="generateReport()" style="width: auto; padding: 6px 10px; font-weight: 600; border-color: var(--border-color);">
+                                <option value="all">ทั้งหมด (All Time)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid-2" style="margin-bottom: 20px;">
+                            <div class="summary-card">
+                                <div class="label">จำนวนบิลทั้งหมด</div>
+                                <div class="value" id="reportTotalOrders">0 <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">บิล</span></div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="label">รวมรายการยาที่ถูกเบิก</div>
+                                <div class="value" id="reportTotalItems">0 <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">รายการ</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-box" id="aiInsightBox">
+                            ✦ <b>AI Insight:</b> กำลังวิเคราะห์ข้อมูล...
+                        </div>
+                        
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left;">ชื่อยา</th>
+                                    <th style="text-align: center;">ยอดเดิม</th>
+                                    <th style="text-align: center;">เบิกไป</th>
+                                    <th style="text-align: center;">คงเหลือ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <button onclick="switchView('user-view')" class="btn" style="background-color: #ef4444; margin-top: 30px;">🚪 ออกจากระบบ</button>
+                <button onclick="switchView('user-view')" class="btn" style="background-color: var(--secondary-color); color: var(--primary-color); border: 1px solid var(--primary-color); margin-top: 20px;">🚪 ออกจากระบบ</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // ⚠️ วาง URL Web App อันเดิมของคุณที่นี่ครับ
-        const API_URL = "https://script.google.com/macros/s/AKfycbz4FjYkhq97CY8HNarHLArNX46Ye373ybRcXqdL5THySaT29ut0797YbMjamZeqaADZ/exec";
+        // ⚠️ วาง URL Web App ของระบบยาคุณที่นี่ครับ
+        const API_URL = "https://script.google.com/macros/s/AKfycbz4FjYkhq97CY8HNarHLArNX46Ye373ybRcXqdL5THySaT29ut0797YbMjamZeqaADZ/exec"; 
         
-        let availableMeds = []; 
+        let globalItems = [];
+        let globalHistory = [];
+        let currentCategoryFilter = 'all'; 
 
-        window.onload = function() { fetchMedicines(); };
+        window.onload = function() { fetchItems(); };
 
-        function fetchMedicines() {
+        function fetchItems() {
             fetch(API_URL)
                 .then(response => response.json())
                 .then(data => {
-                    availableMeds = data;
-                    renderMedicines(data);
-                    renderAdminStock(data);
+                    globalItems = data.items;
+                    globalHistory = data.history;
+                    renderItems(); 
+                    renderAdminStock(globalItems);
+                    renderAdminHistory(globalHistory);
+                    populateMonthFilter();
+                    generateReport();
                 })
-                .catch(error => console.error("Error fetching meds:", error));
+                .catch(error => console.error("Error:", error));
         }
 
-        // --- ส่วนของพนักงาน ---
-        function renderMedicines(meds) {
-            const container = document.getElementById("medicineListContainer");
-            container.innerHTML = ""; 
-            if (meds.length === 0) { container.innerHTML = '<div class="loading-text">ไม่มีรายการยาในสต๊อก</div>'; return; }
+        // --- ระบบกรองหมวดหมู่ยาตามคำหลัก ---
+        function filterCategory(keyword, element) {
+            currentCategoryFilter = keyword;
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            renderItems();
+        }
 
-            meds.forEach((med) => {
-                const imgUrl = med.image ? med.image : `https://via.placeholder.com/100?text=${med.name}`;
-                const isOutOfStock = med.stock <= 0;
+        function renderItems() {
+            const container = document.getElementById("itemListContainer");
+            container.innerHTML = ""; 
+
+            let displayItems = globalItems;
+            if (currentCategoryFilter !== 'all') {
+                displayItems = globalItems.filter(item => item.name.includes(currentCategoryFilter));
+            }
+
+            if (displayItems.length === 0) { 
+                container.innerHTML = `<div class="loading-text" style="color:var(--text-muted);">ไม่พบรายการยาในหมวดหมู่นี้ครับ</div>`; 
+                return; 
+            }
+
+            displayItems.forEach((item) => {
+                const imgUrl = item.image ? item.image : `https://via.placeholder.com/150/0F0F0F/D4AF37?text=${item.name}`;
+                const isOutOfStock = item.stock <= 0;
                 container.innerHTML += `
-                    <div class="medicine-card" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
-                        <img src="${imgUrl}" alt="${med.name}">
-                        <div class="medicine-info">
-                            <div class="medicine-name">${med.name}</div>
-                            <div class="medicine-stock" style="${isOutOfStock ? 'color: red;' : ''}">คงเหลือ: ${med.stock} ${med.unit}</div>
+                    <div class="item-card" style="${isOutOfStock ? 'opacity: 0.6;' : ''}">
+                        <img src="${imgUrl}" alt="${item.name}">
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-stock" style="${isOutOfStock ? 'color: var(--danger-color);' : 'color: var(--success-color); font-weight: 500;'}">
+                                ${isOutOfStock ? 'ยาหมด' : 'คงเหลือ: ' + item.stock + ' ' + item.unit}
+                            </div>
                         </div>
-                        <input type="number" class="medicine-qty med-input" data-name="${med.name}" data-unit="${med.unit}" min="0" max="${med.stock}" placeholder="จำนวน" ${isOutOfStock ? 'disabled' : ''}>
+                        <input type="number" class="item-qty app-input" data-name="${item.name}" data-unit="${item.unit}" min="0" max="${item.stock}" placeholder="จำนวน" ${isOutOfStock ? 'disabled' : ''}>
                     </div>
                 `;
             });
@@ -235,167 +342,214 @@
         function submitForm(event) {
             event.preventDefault(); 
             const submitBtn = document.getElementById("submitBtn");
-            const inputs = document.querySelectorAll('.med-input');
-            let medsDataArray = [], medsSummaryText = [];
+            const inputs = document.querySelectorAll('.app-input');
+            let itemsDataArray = [];
 
             inputs.forEach(input => {
                 let qty = parseInt(input.value);
-                if (qty > 0) {
-                    let name = input.getAttribute('data-name');
-                    let unit = input.getAttribute('data-unit');
-                    medsDataArray.push({ name: name, qty: qty });
-                    medsSummaryText.push(`${name}: ${qty} ${unit}`);
-                }
+                if (qty > 0) itemsDataArray.push({ name: input.getAttribute('data-name'), qty: qty });
             });
 
-            if (medsDataArray.length === 0) return alert("กรุณาระบุจำนวนยาที่ต้องการเบิกครับ");
+            if (itemsDataArray.length === 0) return alert("กรุณาระบุจำนวนยาที่ต้องการเบิกครับ");
 
             const payload = {
-                action: "request_medicine", // บอกหลังบ้านว่านี่คือการเบิกยา
+                action: "request_items", 
                 fullName: document.getElementById("fullName").value,
                 nickName: document.getElementById("nickName").value,
                 position: document.getElementById("position").value,
                 department: document.getElementById("department").value,
                 otherDepartment: document.getElementById("otherDepartment").value,
                 symptoms: document.getElementById("symptoms").value,
-                medsDataArray: medsDataArray,
-                medsSummary: medsSummaryText.join("\n")
+                itemsDataArray: itemsDataArray
             };
 
-            submitBtn.innerText = "⏳ กำลังดำเนินการ...";
-            submitBtn.disabled = true;
+            submitBtn.innerText = "✦ กำลังดำเนินการ..."; submitBtn.disabled = true;
 
             fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert("✅ บันทึกการเบิกยาสำเร็จ!");
+                    alert("✦ บันทึกการเบิกยาเรียบร้อยแล้ว!");
                     document.getElementById("medicineForm").reset(); 
-                    checkDepartment(); fetchMedicines(); 
+                    checkDepartment(); fetchItems(); 
                 }
             })
             .finally(() => { submitBtn.innerText = "ยืนยันการเบิกยา"; submitBtn.disabled = false; });
         }
 
         // --- ส่วนของแอดมิน ---
-        function renderAdminStock(meds) {
+        function renderAdminStock(items) {
             const container = document.getElementById("adminStockContainer");
             container.innerHTML = "";
-            meds.forEach(med => {
-                // ส่งข้อมูลยาเป็น JSON String ผ่าน dataset เพื่อให้ปุ่มแก้ไขดึงไปใช้ได้ง่าย
-                const medJson = JSON.stringify(med).replace(/'/g, "&#39;");
+            items.forEach(item => {
+                const itemJson = JSON.stringify(item).replace(/'/g, "&#39;");
                 container.innerHTML += `
                 <div class="admin-list-item">
                     <div class="admin-item-header">
-                        <div><b>[${med.id}] ${med.name}</b></div>
+                        <div style="font-weight: 600; color: var(--secondary-color);">[${item.id}] ${item.name}</div>
                         <div class="action-btns">
-                            <button onclick='editMedicine(${medJson})' class="btn-small btn-edit">✏️ แก้ไข</button>
-                            <button onclick="deleteMedicine('${med.id}', '${med.name}')" class="btn-small btn-delete">🗑️ ลบ</button>
+                            <button onclick='editItem(${itemJson})' class="btn-small btn-edit">✏️ แก้ไข</button>
+                            <button onclick="deleteItem('${item.id}', '${item.name}')" class="btn-small btn-delete">🗑️ ลบ</button>
                         </div>
                     </div>
-                    <div style="font-size: 13px; color: #6b7280;">
-                        สต๊อก: <strong style="color:${med.stock <= 5 ? 'red' : 'green'};">${med.stock} ${med.unit}</strong>
-                    </div>
+                    <div style="font-size: 13px; color: var(--text-muted);">สต๊อก: <strong style="color:var(--success-color); font-size: 15px;">${item.stock}</strong> ${item.unit}</div>
                 </div>`;
             });
         }
 
-        // นำข้อมูลยามาใส่ในฟอร์มเพื่อเตรียมแก้ไข
-        function editMedicine(med) {
-            document.getElementById("adminFormTitle").innerText = "✏️ แก้ไขข้อมูลยา";
-            document.getElementById("medId").value = med.id;
-            document.getElementById("medId").readOnly = true; // ล็อกไม่ให้แก้รหัสยา
-            document.getElementById("medName").value = med.name;
-            document.getElementById("medUnit").value = med.unit;
-            document.getElementById("medStock").value = med.stock;
-            document.getElementById("medImage").value = med.image;
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // เลื่อนจอกลับขึ้นไปบนสุด
-        }
+        function renderAdminHistory(historyRecords) {
+            const container = document.getElementById("adminHistoryContainer");
+            container.innerHTML = "";
+            if (historyRecords.length === 0) { container.innerHTML = '<div class="loading-text">ยังไม่มีประวัติการทำรายการ</div>'; return; }
 
-        // ล้างฟอร์มแอดมิน
-        function clearAdminForm() {
-            document.getElementById("adminFormTitle").innerText = "➕ เพิ่มรายการยาใหม่";
-            document.getElementById("medId").value = "";
-            document.getElementById("medId").readOnly = false;
-            document.getElementById("medName").value = "";
-            document.getElementById("medUnit").value = "";
-            document.getElementById("medStock").value = "";
-            document.getElementById("medImage").value = "";
-        }
-
-        // บันทึก/อัปเดต ยา
-        function saveMedicineAdmin() {
-            const id = document.getElementById("medId").value;
-            const name = document.getElementById("medName").value;
-            if(!id || !name) return alert("กรุณากรอกรหัสยาและชื่อยาครับ");
-
-            const payload = {
-                action: "save_medicine",
-                med: {
-                    id: id,
-                    name: name,
-                    unit: document.getElementById("medUnit").value || "ชิ้น",
-                    stock: document.getElementById("medStock").value || 0,
-                    image: document.getElementById("medImage").value || ""
-                }
-            };
-
-            const btn = document.getElementById("btnSaveAdmin");
-            btn.innerText = "⏳ กำลังบันทึก..."; btn.disabled = true;
-
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === "success") {
-                    alert("✅ " + data.message);
-                    clearAdminForm();
-                    fetchMedicines(); // โหลดข้อมูลใหม่
-                }
-            })
-            .finally(() => { btn.innerText = "💾 บันทึกข้อมูลยา"; btn.disabled = false; });
-        }
-
-        // ลบยา
-        function deleteMedicine(medId, medName) {
-            if(!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบยา "${medName}" ออกจากระบบ?`)) return;
-
-            const payload = { action: "delete_medicine", medId: medId };
-
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === "success") {
-                    alert("🗑️ " + data.message);
-                    fetchMedicines(); 
-                }
+            historyRecords.forEach(rec => {
+                let dateStr = new Date(rec.timestamp).toLocaleString('th-TH');
+                container.innerHTML += `
+                <div class="admin-list-item" style="border-left: 4px solid var(--primary-color);">
+                    <div class="admin-item-header">
+                        <div style="font-weight: 600; font-size: 14px; color: var(--secondary-color);">บิล: ${rec.orderId}</div>
+                        <button onclick="cancelOrder('${rec.orderId}', ${rec.rowIdx})" class="btn-small btn-delete">❌ ยกเลิกบิล (คืนสต๊อก)</button>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">📅 ${dateStr} | 👤 ${rec.name}</div>
+                    <div class="history-text">${rec.summary}</div>
+                </div>`;
             });
         }
 
-        // UI พื้นฐาน
-        function checkDepartment() {
-            const select = document.getElementById("department");
-            const otherDiv = document.getElementById("otherDeptDiv");
-            const otherInput = document.getElementById("otherDepartment");
-            if (select.value === "อื่นๆ") { otherDiv.style.display = "block"; otherInput.required = true; } 
-            else { otherDiv.style.display = "none"; otherInput.required = false; otherInput.value = ""; }
+        function cancelOrder(orderId, rowIdx) {
+            if(!confirm(`⚠️ ยืนยันการยกเลิกบิลยา ${orderId} และคืนยอดเข้าสต๊อก?`)) return;
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "cancel_order", orderId: orderId, rowIdx: rowIdx }) })
+            .then(res => res.json())
+            .then(data => { if(data.status === "success") { alert("✦ " + data.message); fetchItems(); } else { alert("❌ เกิดข้อผิดพลาด"); } });
         }
+
+        // --- ระบบสรุปรายงาน AI (AI Report) ---
+        function populateMonthFilter() {
+            let select = document.getElementById("reportMonthFilter");
+            select.innerHTML = '<option value="all">ทั้งหมด (All Time)</option>';
+            let months = new Set();
+            globalHistory.forEach(rec => {
+                let d = new Date(rec.timestamp);
+                months.add(d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0'));
+            });
+            let sortedMonths = Array.from(months).sort().reverse();
+            const monthNames = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            sortedMonths.forEach(m => {
+                let [year, month] = m.split("-");
+                select.innerHTML += `<option value="${m}">${monthNames[parseInt(month) - 1]} ${year}</option>`;
+            });
+        }
+
+        function generateReport() {
+            const filter = document.getElementById("reportMonthFilter").value;
+            let itemStats = {};
+            globalItems.forEach(item => { itemStats[item.name] = { original: 0, deductedAllTime: 0, deductedPeriod: 0, remaining: parseInt(item.stock), unit: item.unit }; });
+
+            globalHistory.forEach(rec => {
+                if (rec.rawItems) {
+                    try { JSON.parse(rec.rawItems).forEach(i => { if (itemStats[i.name]) itemStats[i.name].deductedAllTime += parseInt(i.qty); }); } catch(e) {}
+                }
+            });
+
+            for (let key in itemStats) itemStats[key].original = itemStats[key].remaining + itemStats[key].deductedAllTime;
+
+            let filteredHistory = globalHistory.filter(rec => {
+                if (filter === "all") return true;
+                let d = new Date(rec.timestamp);
+                return (d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0')) === filter;
+            });
+
+            let totalOrders = filteredHistory.length;
+            let totalItemsDeducted = 0;
+
+            filteredHistory.forEach(rec => {
+                if (rec.rawItems) {
+                    try { JSON.parse(rec.rawItems).forEach(i => { if (itemStats[i.name]) { itemStats[i.name].deductedPeriod += parseInt(i.qty); totalItemsDeducted += parseInt(i.qty); } }); } catch(e) {}
+                }
+            });
+
+            document.getElementById("reportTotalOrders").innerHTML = `${totalOrders} <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">บิล</span>`;
+            document.getElementById("reportTotalItems").innerHTML = `${totalItemsDeducted} <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">รายการ</span>`;
+
+            let tbody = document.getElementById("reportTableBody");
+            tbody.innerHTML = "";
+            let maxDeducted = 0; let topItem = "-";
+
+            for (let key in itemStats) {
+                let stat = itemStats[key];
+                if (stat.deductedPeriod > maxDeducted) { maxDeducted = stat.deductedPeriod; topItem = key; }
+                if (stat.original > 0) {
+                    tbody.innerHTML += `<tr><td style="font-weight: 500;">${key}</td><td style="text-align: center; color: var(--text-muted);">${stat.original}</td><td style="text-align: center; font-weight: 600; color: var(--danger-color);">${stat.deductedPeriod}</td><td style="text-align: center; font-weight: 600; color: var(--success-color);">${stat.remaining}</td></tr>`;
+                }
+            }
+
+            let aiBox = document.getElementById("aiInsightBox");
+            if (totalOrders === 0) { aiBox.innerHTML = "✦ <b>AI Insight:</b> ยังไม่มีข้อมูลการทำรายการครับ"; } 
+            else {
+                let insightText = `✦ <b>AI Insight:</b> ยาที่มีการเบิกบ่อยที่สุดคือ <b>${topItem}</b> มีการจ่ายไปแล้ว ${maxDeducted} ${itemStats[topItem].unit} `;
+                let topItemRemaining = itemStats[topItem] ? itemStats[topItem].remaining : 0;
+                if (topItemRemaining <= 10) insightText += `<br><span style="color:var(--danger-color);">⚠️ <b>คำแนะนำ:</b> สต๊อกเหลือน้อยกว่ากำหนด (${topItemRemaining} ${itemStats[topItem].unit}) ควรเติมยาเข้าตู้ด่วนครับ!</span>`;
+                else insightText += `<br>✅ สภาพคล่องของสต๊อกยาอยู่ในเกณฑ์มาตรฐานครับ`;
+                aiBox.innerHTML = insightText;
+            }
+        }
+
+        // --- UI & Admin Form ---
+        function editItem(item) {
+            document.getElementById("itemId").value = item.id;
+            document.getElementById("itemId").readOnly = true; 
+            document.getElementById("itemName").value = item.name;
+            document.getElementById("itemUnit").value = item.unit;
+            document.getElementById("itemStock").value = item.stock;
+            document.getElementById("itemImage").value = item.image;
+        }
+
+        function clearAdminForm() {
+            document.getElementById("itemId").value = "";
+            document.getElementById("itemId").readOnly = false;
+            document.getElementById("itemName").value = "";
+            document.getElementById("itemUnit").value = "เม็ด";
+            document.getElementById("itemStock").value = "";
+            document.getElementById("itemImage").value = "";
+        }
+
+        function saveItemAdmin() {
+            const id = document.getElementById("itemId").value;
+            const name = document.getElementById("itemName").value;
+            if(!id || !name) return alert("กรุณากรอกรหัสและชื่อยา");
+            const payload = { action: "save_item", item: { id: id, name: name, unit: document.getElementById("itemUnit").value || "เม็ด", stock: document.getElementById("itemStock").value || 0, image: document.getElementById("itemImage").value || "" } };
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(res => res.json()).then(data => { if(data.status === "success") { alert("✦ " + data.message); clearAdminForm(); fetchItems(); } });
+        }
+
+        function deleteItem(itemId, itemName) {
+            if(!confirm(`ต้องการลบยา "${itemName}" ออกจากระบบ?`)) return;
+            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "delete_item", itemId: itemId }) })
+            .then(res => res.json()).then(data => { if(data.status === "success") { alert("🗑️ " + data.message); fetchItems(); } });
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#admin-dashboard-view > .content > div').forEach(el => el.style.display = 'none');
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('admin-section-' + tab).style.display = 'block';
+        }
+
+        function checkDepartment() { document.getElementById("otherDeptDiv").style.display = document.getElementById("department").value === "อื่นๆ" ? "block" : "none"; }
 
         function switchView(viewId) {
             document.getElementById("user-view").style.display = "none";
             document.getElementById("admin-login-view").style.display = "none";
             document.getElementById("admin-dashboard-view").style.display = "none";
             document.getElementById(viewId).style.display = "block";
-            if (viewId === 'admin-dashboard-view') fetchMedicines();
+            if (viewId === 'admin-dashboard-view') fetchItems();
         }
 
         function loginAdmin() {
-            const pass = document.getElementById("adminPass").value;
-            if (pass === "adminhr0208") {
+            if (document.getElementById("adminPass").value === "adminhr0208") {
                 document.getElementById("adminPass").value = ""; 
                 switchView("admin-dashboard-view");
-            } else {
-                alert("รหัสผ่านไม่ถูกต้อง");
-            }
+            } else { alert("รหัสผ่านไม่ถูกต้อง"); }
         }
     </script>
 </body>
