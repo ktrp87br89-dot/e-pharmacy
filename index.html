@@ -3,554 +3,1974 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเบิกยาสำหรับพนักงาน (e-Pharmacy) - Majestic Gold</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>e-Pharmacy — ระบบเบิกยาพนักงาน</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --primary-color: #D4AF37; 
-            --primary-hover: #B8860B; 
-            --secondary-color: #0F0F0F; 
-            --bg-color: #FBFBF9; 
-            --card-bg: #FFFFFF; 
-            --text-main: #1A1A1A; 
-            --text-muted: #7A6B53; 
-            --border-color: #E8D8BA; 
-            --danger-color: #8B0000; 
-            --success-color: #1A5A22; 
-        }
-        body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 650px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); overflow: hidden; position: relative; border: 1px solid var(--border-color); }
-        
-        .header { background-color: var(--secondary-color); color: var(--primary-color); padding: 35px 20px; text-align: center; border-bottom: 4px solid var(--primary-color); position: relative; }
-        .admin-btn-top { position: absolute; top: 15px; right: 15px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 6px; font-family: 'Prompt'; font-size: 12px; cursor: pointer; transition: 0.3s; }
-        .admin-btn-top:hover { background: var(--primary-color); color: var(--secondary-color); font-weight: 600; }
+    /* ══════════════════════════════════════
+       TOKENS
+    ══════════════════════════════════════ */
+    :root {
+        --teal:        #0EA5B0;
+        --teal-light:  #3DCAD4;
+        --teal-dim:    #0B8A94;
+        --teal-bg:     rgba(14,165,176,0.08);
+        --teal-glow:   0 0 0 3px rgba(14,165,176,0.18);
 
-        .header h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        .header p { margin: 8px 0 0; font-size: 14px; opacity: 0.8; font-weight: 300; letter-spacing: 1px; color: #E8D8BA; }
-        .content { padding: 35px 30px; }
-        
-        .section-title { font-size: 16px; font-weight: 600; color: var(--secondary-color); margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px; }
-        .section-title::before { content: "✦"; color: var(--primary-color); }
-        
-        .form-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--text-main); }
-        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Prompt'; font-size: 14px; transition: 0.3s; background-color: #FFFFFF; color: var(--text-main); box-sizing: border-box;}
-        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15); }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        --navy:        #0C1B2A;
+        --navy-soft:   #0F2236;
+        --navy-mid:    #162D41;
+        --navy-border: #1E3A50;
+        --navy-hover:  #1A3348;
 
-        .category-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .category-tab { padding: 8px 18px; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--text-muted); font-weight: 500; }
-        .category-tab:hover { border-color: var(--primary-color); color: var(--secondary-color); box-shadow: 0 4px 10px rgba(212, 175, 55, 0.1); }
-        .category-tab.active { background: var(--primary-color); color: var(--secondary-color); border-color: var(--primary-color); font-weight: 600; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); }
-        .category-tabs::-webkit-scrollbar { display: none; }
+        --white:       #FFFFFF;
+        --off-white:   #F4F9FA;
+        --surface:     #EBF4F6;
+        --muted:       #7A9BAE;
+        --text-main:   #0C1B2A;
+        --text-sub:    #4A6A7E;
 
-        .item-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-        .item-card { display: flex; align-items: center; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; background: #FFFFFF; transition: all 0.3s; }
-        .item-card:hover { border-color: var(--primary-color); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.08); transform: translateY(-2px); }
-        .item-card img { width: 75px; height: 75px; object-fit: cover; border-radius: 6px; margin-right: 18px; border: 1px solid var(--border-color); padding: 2px; }
-        .item-info { flex-grow: 1; }
-        .item-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: var(--secondary-color); }
-        .item-stock { font-size: 13px; color: var(--text-muted); }
-        .item-qty { width: 90px !important; text-align: center; font-weight: 600; border-color: var(--border-color) !important; color: var(--secondary-color); background: #FDFDFB !important; }
-        .item-qty:focus { background: #FFF !important; }
-        
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Prompt'; transition: all 0.3s; letter-spacing: 0.5px; text-transform: uppercase; }
-        .btn-submit { background-color: var(--primary-color); color: var(--secondary-color); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
-        .btn-submit:hover { background-color: var(--primary-hover); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); transform: translateY(-1px); }
-        .btn-submit:disabled { background-color: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
-        
-        #admin-login-view, #admin-dashboard-view { display: none; }
-        .loading-text { text-align: center; padding: 20px; color: var(--primary-color); font-size: 14px; font-weight: 500; letter-spacing: 1px; }
+        --red:         #D14343;
+        --red-bg:      rgba(209,67,67,0.08);
+        --amber:       #E8A020;
+        --amber-bg:    rgba(232,160,32,0.08);
+        --green:       #1A9E5A;
+        --green-bg:    rgba(26,158,90,0.08);
 
-        .admin-box { background: #FFFFFF; border: 1px solid var(--border-color); padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .admin-list-item { display: flex; flex-direction: column; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; background: #FFFFFF; transition: 0.3s; }
-        .admin-list-item:hover { border-color: var(--primary-color); }
-        .admin-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .action-btns { display: flex; gap: 8px; }
-        
-        .btn-small { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; color: #FFFFFF; font-family: 'Prompt'; font-weight: 500; }
-        .btn-edit { background-color: var(--text-muted); }
-        .btn-edit:hover { background-color: var(--primary-color); color: var(--secondary-color); }
-        .btn-delete { background-color: var(--danger-color); }
-        .history-text { font-size: 13px; color: var(--text-muted); white-space: pre-line; background: var(--bg-color); padding: 12px; border-radius: 6px; margin-top: 8px; border: 1px dashed var(--border-color); }
-        
-        .admin-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 20px; font-size: 14px; }
-        .admin-tab { flex: 1; text-align: center; padding: 12px 5px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: 0.3s; }
-        .admin-tab:hover { color: var(--primary-hover); }
-        .admin-tab.active { color: var(--secondary-color); border-bottom: 3px solid var(--primary-color); margin-bottom: -2px; }
-        
-        .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-        .report-table th { background: var(--secondary-color); color: var(--primary-color); padding: 14px 10px; font-weight: 500; letter-spacing: 0.5px; }
-        .report-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
-        .report-table tr:hover td { background: rgba(212, 175, 55, 0.03); }
-        .report-table tr:last-child td { border-bottom: none; }
-        
-        .summary-card { background: #FFFFFF; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .summary-card .label { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-        .summary-card .value { font-size: 28px; font-weight: 700; color: var(--primary-color); margin-top: 5px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
-        
-        .ai-box { background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%); color: var(--secondary-color); padding: 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid var(--primary-color); line-height: 1.6; }
+        --radius-xs:   4px;
+        --radius-sm:   8px;
+        --radius-md:   14px;
+        --radius-lg:   22px;
+        --radius-pill: 99px;
+
+        --shadow-sm:   0 1px 4px rgba(12,27,42,0.08);
+        --shadow-md:   0 4px 20px rgba(12,27,42,0.10);
+        --shadow-lg:   0 12px 40px rgba(12,27,42,0.14);
+        --shadow-teal: 0 4px 20px rgba(14,165,176,0.20);
+
+        --transition:  all 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        background: var(--off-white);
+        background-image:
+            radial-gradient(ellipse 100% 60% at 50% -5%, rgba(14,165,176,0.07) 0%, transparent 60%),
+            linear-gradient(180deg, var(--off-white) 0%, #E8F4F6 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 20px 16px 80px;
+        color: var(--text-main);
+    }
+
+    /* ══════════════════════════════════════
+       SHELL
+    ══════════════════════════════════════ */
+    .shell {
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER BAND
+    ══════════════════════════════════════ */
+    .app-header {
+        background: var(--navy);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding: 28px 24px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .app-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 120% at 50% -20%, rgba(14,165,176,0.15) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .app-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 24px; right: 24px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--teal), transparent);
+        opacity: 0.4;
+    }
+
+    .header-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(14,165,176,0.12);
+        border: 1px solid rgba(14,165,176,0.25);
+        color: var(--teal-light);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: var(--radius-pill);
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .header-badge .dot {
+        width: 6px; height: 6px;
+        background: var(--teal-light);
+        border-radius: 50%;
+        animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .admin-pill-btn {
+        background: transparent;
+        border: 1px solid var(--navy-border);
+        color: var(--muted);
+        padding: 6px 14px;
+        border-radius: var(--radius-pill);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .admin-pill-btn:hover {
+        border-color: var(--teal);
+        color: var(--teal-light);
+        background: var(--teal-bg);
+    }
+
+    .header-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(22px, 5vw, 28px);
+        font-weight: 700;
+        color: var(--white);
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+    }
+
+    .header-title span { color: var(--teal-light); }
+
+    .header-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 5px;
+        font-weight: 400;
+    }
+
+    /* ══════════════════════════════════════
+       STEP PROGRESS BAR
+    ══════════════════════════════════════ */
+    .progress-bar-wrap {
+        background: var(--navy-soft);
+        border-left: 1px solid var(--navy-border);
+        border-right: 1px solid var(--navy-border);
+        padding: 18px 24px;
+    }
+
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    .ps-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex: 1;
+    }
+
+    .ps-circle {
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        border: 1.5px solid var(--navy-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        flex-shrink: 0;
+        transition: var(--transition);
+        font-family: 'Space Grotesk', sans-serif;
+        background: var(--navy);
+    }
+
+    .ps-item.active .ps-circle {
+        background: var(--teal);
+        border-color: var(--teal);
+        color: var(--white);
+        box-shadow: 0 0 14px rgba(14,165,176,0.35);
+    }
+
+    .ps-item.done .ps-circle {
+        background: var(--teal-dim);
+        border-color: var(--teal-dim);
+        color: var(--white);
+        font-size: 14px;
+    }
+
+    .ps-text {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+    }
+
+    .ps-item.active .ps-text { color: var(--teal-light); }
+    .ps-item.done .ps-text   { color: var(--teal-dim); }
+
+    .ps-line {
+        flex: 1;
+        height: 1px;
+        background: var(--navy-border);
+        margin: 0 6px;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+
+    .ps-line.done { background: var(--teal-dim); }
+
+    /* ══════════════════════════════════════
+       MAIN CARD
+    ══════════════════════════════════════ */
+    .main-card {
+        background: var(--white);
+        border: 1px solid #D8EAEE;
+        border-top: none;
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    .form-body {
+        padding: 28px 24px 24px;
+    }
+
+    /* ══════════════════════════════════════
+       SECTIONS
+    ══════════════════════════════════════ */
+    .form-section { display: none; }
+    .form-section.active {
+        display: block;
+        animation: slideIn 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(12px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .sec-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .sec-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(14,165,176,0.3), transparent);
+    }
+
+    /* ══════════════════════════════════════
+       INPUTS
+    ══════════════════════════════════════ */
+    .field     { margin-bottom: 16px; }
+    .field-row { display: grid; gap: 14px; margin-bottom: 16px; }
+    .field-row.col-2 { grid-template-columns: 1fr 1fr; }
+    .field-row.col-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-sub);
+        margin-bottom: 7px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .field-label .req { color: var(--teal); margin-left: 2px; }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        font-size: 14px;
+        color: var(--text-main);
+        transition: var(--transition);
+        -webkit-appearance: none;
+        appearance: none;
+        resize: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder { color: #AABFC9; }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--teal);
+        background: var(--white);
+        box-shadow: var(--teal-glow);
+    }
+
+    select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' fill='none'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%237A9BAE' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 34px;
+        cursor: pointer;
+    }
+
+    select option { background: #fff; color: var(--text-main); }
+
+    /* Symptoms textarea */
+    .symptoms-box {
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .symptoms-box .sym-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-sub);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .symptoms-box .sym-icon {
+        width: 26px; height: 26px;
+        background: var(--teal-bg);
+        border-radius: var(--radius-xs);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .symptoms-box textarea {
+        border: 1.5px solid #D0E4EA;
+        background: var(--white);
+        min-height: 90px;
+    }
+
+    /* Quick symptom tags */
+    .sym-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .sym-tag {
+        padding: 5px 12px;
+        background: var(--white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        color: var(--text-sub);
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .sym-tag:hover, .sym-tag.active {
+        border-color: var(--teal);
+        color: var(--teal);
+        background: var(--teal-bg);
+    }
+
+    /* ══════════════════════════════════════
+       CATEGORY FILTER
+    ══════════════════════════════════════ */
+    .cat-filter {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        margin-bottom: 18px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cat-filter::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+        padding: 8px 16px;
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-pill);
+        background: var(--white);
+        color: var(--text-sub);
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: var(--transition);
+        letter-spacing: 0.3px;
+    }
+
+    .cat-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .cat-btn.active { background: var(--teal); border-color: var(--teal); color: var(--white); box-shadow: var(--shadow-teal); }
+
+    /* ══════════════════════════════════════
+       MEDICINE CARDS
+    ══════════════════════════════════════ */
+    .med-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .med-card {
+        display: grid;
+        grid-template-columns: 64px 1fr auto;
+        align-items: center;
+        gap: 14px;
+        background: var(--white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        padding: 14px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .med-card::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: transparent;
+        border-radius: 3px 0 0 3px;
+        transition: var(--transition);
+    }
+
+    .med-card:hover {
+        border-color: #9DCCD6;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .med-card.selected {
+        border-color: var(--teal);
+        background: rgba(14,165,176,0.03);
+        box-shadow: 0 0 0 1px var(--teal);
+    }
+
+    .med-card.selected::before { background: var(--teal); }
+
+    .med-card.oos {
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+    .med-img {
+        width: 64px; height: 64px;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+        border: 1.5px solid #D0E4EA;
+        background: var(--surface);
+    }
+
+    .med-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-main);
+        line-height: 1.3;
+        margin-bottom: 5px;
+    }
+
+    .med-stock {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: var(--radius-pill);
+    }
+
+    .med-stock.ok   { background: var(--green-bg); color: var(--green); }
+    .med-stock.low  { background: var(--amber-bg); color: var(--amber); }
+    .med-stock.none { background: var(--red-bg);   color: var(--red); }
+
+    .med-stock .sdot {
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* Qty Stepper */
+    .qty-wrap {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        background: var(--off-white);
+    }
+
+    .med-card.selected .qty-wrap {
+        border-color: var(--teal);
+        background: var(--white);
+    }
+
+    .q-btn {
+        width: 32px; height: 36px;
+        background: transparent;
+        border: none;
+        color: var(--text-sub);
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+
+    .q-btn:hover:not(:disabled) {
+        background: var(--teal);
+        color: var(--white);
+    }
+
+    .q-btn:disabled { opacity: 0.25; cursor: default; }
+
+    .q-input {
+        width: 40px !important;
+        height: 36px !important;
+        border: none !important;
+        border-left: 1.5px solid #D0E4EA !important;
+        border-right: 1.5px solid #D0E4EA !important;
+        border-radius: 0 !important;
+        background: var(--white) !important;
+        text-align: center;
+        font-weight: 700;
+        font-size: 14px !important;
+        color: var(--text-main) !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .q-input:focus { box-shadow: none !important; border-color: #D0E4EA !important; }
+
+    /* ══════════════════════════════════════
+       CART SUMMARY
+    ══════════════════════════════════════ */
+    .cart-bar {
+        background: linear-gradient(135deg, rgba(14,165,176,0.06), rgba(14,165,176,0.02));
+        border: 1.5px solid rgba(14,165,176,0.25);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        display: none;
+    }
+
+    .cart-bar.show { display: block; animation: fadeIn 0.25s ease; }
+
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .cart-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-family: 'Space Grotesk', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .cart-chip {
+        background: var(--teal);
+        color: var(--white);
+        padding: 3px 10px;
+        border-radius: var(--radius-pill);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .cart-rows { display: flex; flex-direction: column; gap: 5px; }
+
+    .cart-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--text-sub);
+    }
+
+    .cart-row b { color: var(--text-main); font-weight: 600; }
+
+    /* ══════════════════════════════════════
+       CONFIRM SCREEN
+    ══════════════════════════════════════ */
+    .confirm-block {
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        padding: 18px;
+        margin-bottom: 14px;
+    }
+
+    .confirm-title {
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-weight: 700;
+        font-family: 'Space Grotesk', sans-serif;
+        margin-bottom: 12px;
+    }
+
+    .confirm-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 8px 0;
+        border-top: 1px solid #E0EEF2;
+        font-size: 13px;
+    }
+
+    .confirm-row:first-of-type { border-top: none; padding-top: 0; }
+    .ck { color: var(--text-sub); font-weight: 500; flex-shrink: 0; margin-right: 12px; }
+    .cv { color: var(--text-main); font-weight: 600; text-align: right; }
+
+    .confirm-symptoms {
+        background: var(--white);
+        border: 1px solid #D0E4EA;
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        font-size: 13px;
+        color: var(--text-sub);
+        line-height: 1.6;
+        margin-top: 6px;
+    }
+
+    /* ══════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════ */
+    .btn-row { display: flex; gap: 10px; margin-top: 6px; }
+
+    .btn {
+        flex: 1;
+        padding: 14px 20px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+        background: var(--teal);
+        color: var(--white);
+        box-shadow: var(--shadow-teal);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: var(--teal-light);
+        box-shadow: 0 6px 24px rgba(14,165,176,0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+        background: #BDD8DF;
+        color: #fff;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1.5px solid #D0E4EA;
+        color: var(--text-sub);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+    }
+
+    .btn-icon {
+        flex: 0 0 auto;
+        padding: 14px 16px;
+    }
+
+    .btn-danger-outline {
+        background: transparent;
+        border: 1.5px solid #FFCECE;
+        color: var(--red);
+    }
+
+    .btn-danger-outline:hover {
+        background: var(--red-bg);
+        border-color: var(--red);
+    }
+
+    /* ══════════════════════════════════════
+       SUCCESS SCREEN
+    ══════════════════════════════════════ */
+    .success-view {
+        padding: 56px 24px 48px;
+        text-align: center;
+        display: none;
+    }
+
+    .success-view.show { display: block; animation: slideIn 0.35s ease; }
+
+    .success-ring {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--teal-bg), rgba(14,165,176,0.04));
+        border: 2px solid var(--teal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        margin: 0 auto 22px;
+        box-shadow: 0 0 40px rgba(14,165,176,0.2), inset 0 0 20px rgba(14,165,176,0.05);
+    }
+
+    .success-view h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
+
+    .success-view p {
+        font-size: 14px;
+        color: var(--text-sub);
+        line-height: 1.7;
+        margin-bottom: 28px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ══════════════════════════════════════
+       SKELETON
+    ══════════════════════════════════════ */
+    .skeleton {
+        background: linear-gradient(90deg, var(--surface) 25%, #EAF2F4 50%, var(--surface) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.3s infinite;
+        border-radius: var(--radius-md);
+    }
+
+    @keyframes shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast-wrap {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+        align-items: center;
+    }
+
+    .toast {
+        background: var(--navy);
+        border: 1px solid var(--navy-border);
+        color: var(--white);
+        padding: 11px 20px;
+        border-radius: var(--radius-pill);
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+        box-shadow: 0 8px 32px rgba(12,27,42,0.25);
+    }
+
+    .toast.ok  { border-color: var(--teal-dim); }
+    .toast.err { border-color: var(--red); }
+
+    @keyframes toastIn  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+    /* ══════════════════════════════════════
+       VIEW TOGGLE
+    ══════════════════════════════════════ */
+    #admin-login-view, #admin-dashboard-view { display: none; }
+
+    /* ══════════════════════════════════════
+       ADMIN — AUTH
+    ══════════════════════════════════════ */
+    .auth-shell {
+        background: var(--white);
+        border: 1px solid #D8EAEE;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        margin-top: 20px;
+    }
+
+    .auth-head {
+        background: var(--navy);
+        padding: 32px 24px;
+        text-align: center;
+        border-bottom: 1px solid var(--navy-border);
+        position: relative;
+    }
+
+    .auth-head::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 24px; right: 24px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--teal), transparent);
+        opacity: 0.4;
+    }
+
+    .auth-head h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--white);
+    }
+
+    .auth-head p { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+    .auth-body { padding: 28px 24px 24px; }
+
+    .back-lnk {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 13px;
+        color: var(--text-sub);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .back-lnk:hover { color: var(--teal); }
+
+    /* ══════════════════════════════════════
+       ADMIN — DASHBOARD
+    ══════════════════════════════════════ */
+    .dash-shell {
+        background: var(--white);
+        border: 1px solid #D8EAEE;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    .dash-head {
+        background: var(--navy);
+        padding: 22px 24px 0;
+        border-bottom: 1px solid var(--navy-border);
+        position: relative;
+    }
+
+    .dash-head::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 120% at 50% -20%, rgba(14,165,176,0.12), transparent 60%);
+        pointer-events: none;
+    }
+
+    .dash-head-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 18px;
+    }
+
+    .dash-head h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--white);
+    }
+
+    .dash-head p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    .dash-tabs-nav {
+        display: flex;
+        gap: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dtab {
+        flex: 1;
+        padding: 12px 6px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: var(--transition);
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .dtab:hover { color: var(--teal-light); }
+    .dtab.active { color: var(--teal-light); border-bottom-color: var(--teal); }
+
+    .dash-body { padding: 24px; }
+
+    .dash-section { display: none; }
+    .dash-section.active { display: block; animation: slideIn 0.25s ease; }
+
+    /* Stat cards */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+
+    .stat-card {
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        padding: 16px;
+    }
+
+    .stat-lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-sub);
+        font-family: 'Space Grotesk', sans-serif;
+        margin-bottom: 6px;
+    }
+
+    .stat-val {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--teal);
+        line-height: 1;
+    }
+
+    .stat-unit {
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        font-size: 12px;
+        color: var(--text-sub);
+        margin-left: 3px;
+        font-weight: 400;
+    }
+
+    /* AI Box */
+    .ai-box {
+        background: linear-gradient(135deg, rgba(14,165,176,0.06), rgba(14,165,176,0.01));
+        border: 1.5px solid rgba(14,165,176,0.25);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text-sub);
+        margin-bottom: 18px;
+    }
+
+    .ai-box strong { color: var(--teal-dim); }
+
+    /* Data table */
+    .data-tbl {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    .data-tbl th {
+        background: var(--navy);
+        color: var(--teal-light);
+        padding: 12px 14px;
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .data-tbl td {
+        padding: 11px 14px;
+        border-top: 1px solid #E0EEF2;
+        color: var(--text-main);
+        vertical-align: middle;
+    }
+
+    .data-tbl tbody tr:hover td { background: rgba(14,165,176,0.02); }
+
+    /* Stock list */
+    .stock-row {
+        display: flex;
+        align-items: center;
+        padding: 13px 0;
+        border-bottom: 1px solid #EAF2F4;
+        gap: 12px;
+    }
+
+    .stock-row:last-child { border-bottom: none; }
+
+    .stock-info { flex: 1; }
+    .stock-id { font-size: 11px; color: var(--text-sub); letter-spacing: 1px; }
+    .stock-name { font-weight: 600; font-size: 14px; color: var(--text-main); }
+
+    .stock-chip {
+        padding: 4px 12px;
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .chip-ok   { background: var(--green-bg); color: var(--green); }
+    .chip-low  { background: var(--amber-bg); color: var(--amber); }
+    .chip-none { background: var(--red-bg); color: var(--red); }
+
+    .action-sm { display: flex; gap: 6px; }
+
+    .btn-mini {
+        padding: 6px 10px;
+        border-radius: var(--radius-xs);
+        border: 1.5px solid #D0E4EA;
+        background: transparent;
+        color: var(--text-sub);
+        font-family: 'IBM Plex Sans Thai', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-mini:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-mini.del:hover { border-color: var(--red); color: var(--red); }
+
+    /* History */
+    .hist-item {
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-left: 3px solid var(--teal);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        margin-bottom: 10px;
+    }
+
+    .hist-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .hist-id {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 13px;
+        color: var(--teal-dim);
+        font-weight: 700;
+    }
+
+    .hist-meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+
+    .hist-body {
+        font-size: 12px;
+        color: var(--text-sub);
+        background: var(--white);
+        border: 1px solid #D0E4EA;
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        white-space: pre-line;
+        line-height: 1.7;
+    }
+
+    /* Admin form */
+    .adm-form-card {
+        background: var(--off-white);
+        border: 1.5px solid #D0E4EA;
+        border-radius: var(--radius-md);
+        padding: 18px;
+        margin-bottom: 20px;
+    }
+
+    .adm-form-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-family: 'Space Grotesk', sans-serif;
+        margin-bottom: 16px;
+    }
+
+    .filter-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .filter-row h3 {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--text-main);
+        font-family: 'Space Grotesk', sans-serif;
+        text-transform: uppercase;
+    }
+
+    select.mini-sel {
+        width: auto;
+        padding: 7px 28px 7px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-color: #D0E4EA;
+        background-size: 10px;
+    }
+
+    /* Empty */
+    .empty-state {
+        text-align: center;
+        padding: 32px;
+        font-size: 13px;
+        color: var(--text-sub);
+        border: 1.5px dashed #D0E4EA;
+        border-radius: var(--radius-md);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #D0E4EA; border-radius: 4px; }
+
+    /* Responsive */
+    @media (max-width: 420px) {
+        body { padding: 0 0 80px; }
+        .app-header, .progress-bar-wrap, .main-card { border-radius: 0; }
+        .form-body, .auth-body, .dash-body { padding: 20px 16px; }
+        .field-row.col-2, .field-row.col-3 { grid-template-columns: 1fr; }
+        .ps-text { display: none; }
+    }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <div id="user-view">
-            <div class="header">
-                <button type="button" class="admin-btn-top" onclick="switchView('admin-login-view')">✦ ADMIN</button>
-                <h1>ระบบเบิกยา (e-Pharmacy)</h1>
-                <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อดำเนินการเบิกยา</p>
+<div class="shell">
+    <!-- TOAST -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- ═══════════════════════════════
+         USER VIEW
+    ═══════════════════════════════ -->
+    <div id="user-view">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-top">
+                <div class="header-badge">
+                    <span class="dot"></span>
+                    e-Pharmacy
+                </div>
+                <button class="admin-pill-btn" onclick="switchView('admin-login-view')">Admin</button>
             </div>
-            
-            <div class="content">
-                <form id="medicineForm" onsubmit="submitForm(event)">
-                    
-                    <div class="section-title">ข้อมูลพนักงาน</div>
-                    <div class="form-group">
-                        <label>ชื่อ-นามสกุล *</label>
-                        <input type="text" id="fullName" required placeholder="ระบุชื่อ-นามสกุลผู้เบิก">
-                    </div>
-                    
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>ชื่อเล่น *</label>
-                            <input type="text" id="nickName" required placeholder="ระบุชื่อเล่น">
-                        </div>
-                        <div class="form-group">
-                            <label>ตำแหน่ง *</label>
-                            <input type="text" id="position" required placeholder="ระบุตำแหน่ง">
-                        </div>
-                    </div>
+            <div class="header-title">ระบบเบิกยา<span> พนักงาน</span></div>
+            <div class="header-sub">กรุณากรอกข้อมูลให้ครบถ้วนก่อนทำรายการ</div>
+        </div>
 
-                    <div class="form-group">
-                        <label>สังกัด / แผนก *</label>
-                        <select id="department" required onchange="checkDepartment()">
-                            <option value="">-- กรุณาเลือกแผนก --</option>
-                            <option value="BACK OFFICE">BACK OFFICE</option>
-                            <option value="Telesale PA 1">Telesale PA 1</option>
-                            <option value="Telesale PA 2">Telesale PA 2</option>
-                            <option value="Telesale PA 3">Telesale PA 3</option>
-                            <option value="Telesale HEALTH">Telesale HEALTH</option>
-                            <option value="Telesale MOTOR 1">Telesale MOTOR 1</option>
-                            <option value="Telesale MOTOR 2">Telesale MOTOR 2</option>
-                            <option value="Telesale TRUE 1">Telesale TRUE 1</option>
-                            <option value="Telesale TRUE 2">Telesale TRUE 2</option>
-                            <option value="Telesale TRUE 3">Telesale TRUE 3</option>
-                            <option value="Telesale TRUE 4">Telesale TRUE 4</option>
-                            <option value="QC QA & Admin">QC QA & Admin</option>
-                            <option value="อื่นๆ">อื่นๆ (ระบุ)</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="otherDeptDiv" style="display: none;">
-                        <input type="text" id="otherDepartment" placeholder="พิมพ์ชื่อแผนก">
-                    </div>
-
-                    <div class="section-title">อาการป่วยเบื้องต้น</div>
-                    <div class="form-group">
-                        <textarea id="symptoms" rows="3" required placeholder="ระบุอาการของคุณ เช่น ปวดหัว, มีไข้, ปวดท้อง ฯลฯ"></textarea>
-                    </div>
-
-                    <div class="section-title">เลือกรายการยาที่ต้องการ</div>
-                    
-                    <div class="category-tabs" id="categoryTabs">
-                        <div class="category-tab active" onclick="filterCategory('all', this)">รวมทั้งหมด</div>
-                        <div class="category-tab" onclick="filterCategory('ปวด', this)">💊 ปวด/ไข้</div>
-                        <div class="category-tab" onclick="filterCategory('แพ้', this)">🤧 ภูมิแพ้/หวัด</div>
-                        <div class="category-tab" onclick="filterCategory('ท้อง', this)">กระเพาะ/ลำไส้</div>
-                        <div class="category-tab" onclick="filterCategory('แผล', this)">🩹 ทำแผล</div>
-                    </div>
-
-                    <div class="item-list" id="itemListContainer">
-                        <div class="loading-text">✦ กำลังโหลดรายการยา...</div>
-                    </div>
-
-                    <button type="submit" id="submitBtn" class="btn btn-submit">ยืนยันการเบิกยา</button>
-                </form>
+        <!-- Progress -->
+        <div class="progress-bar-wrap">
+            <div class="progress-steps">
+                <div class="ps-item active" id="psi-1">
+                    <div class="ps-circle"><span>1</span></div>
+                    <div class="ps-text">ข้อมูล</div>
+                </div>
+                <div class="ps-line" id="psl-12"></div>
+                <div class="ps-item" id="psi-2">
+                    <div class="ps-circle"><span>2</span></div>
+                    <div class="ps-text">เลือกยา</div>
+                </div>
+                <div class="ps-line" id="psl-23"></div>
+                <div class="ps-item" id="psi-3">
+                    <div class="ps-circle"><span>3</span></div>
+                    <div class="ps-text">ยืนยัน</div>
+                </div>
             </div>
         </div>
 
-        <div id="admin-login-view">
-            <div class="header">
-                <h1>MAJESTIC ADMIN</h1>
+        <!-- Main Card -->
+        <div class="main-card">
+            <div class="form-body">
+                <form id="medForm">
+
+                    <!-- ── STEP 1: Info + Symptoms ── -->
+                    <div class="form-section active" id="step-1">
+                        <div class="sec-label">ข้อมูลพนักงาน</div>
+
+                        <div class="field">
+                            <label class="field-label">ชื่อ-นามสกุล <span class="req">*</span></label>
+                            <input type="text" id="fullName" required placeholder="ระบุชื่อ-นามสกุล">
+                        </div>
+
+                        <div class="field-row col-2">
+                            <div>
+                                <label class="field-label">ชื่อเล่น <span class="req">*</span></label>
+                                <input type="text" id="nickName" required placeholder="ชื่อเล่น">
+                            </div>
+                            <div>
+                                <label class="field-label">ตำแหน่ง <span class="req">*</span></label>
+                                <input type="text" id="position" required placeholder="ตำแหน่งงาน">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label">แผนก / สังกัด <span class="req">*</span></label>
+                            <select id="department" required onchange="checkDepartment()">
+                                <option value="">— เลือกแผนก —</option>
+                                <option>BACK OFFICE</option>
+                                <option>Telesale PA 1</option>
+                                <option>Telesale PA 2</option>
+                                <option>Telesale PA 3</option>
+                                <option>Telesale HEALTH</option>
+                                <option>Telesale MOTOR 1</option>
+                                <option>Telesale MOTOR 2</option>
+                                <option>Telesale TRUE 1</option>
+                                <option>Telesale TRUE 2</option>
+                                <option>Telesale TRUE 3</option>
+                                <option>Telesale TRUE 4</option>
+                                <option>QC QA &amp; Admin</option>
+                                <option value="อื่นๆ">อื่นๆ (ระบุ)</option>
+                            </select>
+                        </div>
+
+                        <div class="field" id="otherDeptDiv" style="display:none">
+                            <input type="text" id="otherDepartment" placeholder="ระบุชื่อแผนก">
+                        </div>
+
+                        <!-- Symptoms -->
+                        <div class="symptoms-box">
+                            <div class="sym-label">
+                                <div class="sym-icon">🩺</div>
+                                อาการเบื้องต้น <span class="req" style="color:var(--teal)">*</span>
+                            </div>
+
+                            <div class="sym-tags" id="symTagRow">
+                                <div class="sym-tag" onclick="addSymptom(this)">🤕 ปวดหัว</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">🤒 มีไข้</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">🤧 คัดจมูก</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">🤢 คลื่นไส้</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">😣 ปวดท้อง</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">😮‍💨 ไอ</div>
+                                <div class="sym-tag" onclick="addSymptom(this)">🤦 เวียนหัว</div>
+                            </div>
+
+                            <textarea id="symptoms" rows="3" required placeholder="อธิบายอาการเพิ่มเติม..."></textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-primary" onclick="goToStep2()">
+                            ถัดไป — เลือกรายการยา
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- ── STEP 2: Select Medicines ── -->
+                    <div class="form-section" id="step-2">
+                        <div class="sec-label">เลือกรายการยา</div>
+
+                        <div class="cat-filter" id="catFilter">
+                            <button type="button" class="cat-btn active" onclick="filterCat('all',this)">ทั้งหมด</button>
+                            <button type="button" class="cat-btn" onclick="filterCat('ปวด',this)">💊 ปวด/ไข้</button>
+                            <button type="button" class="cat-btn" onclick="filterCat('แพ้',this)">🤧 แพ้/หวัด</button>
+                            <button type="button" class="cat-btn" onclick="filterCat('ท้อง',this)">🫃 กระเพาะ</button>
+                            <button type="button" class="cat-btn" onclick="filterCat('แผล',this)">🩹 ทำแผล</button>
+                        </div>
+
+                        <div class="med-grid" id="medGrid">
+                            <div style="display:flex;flex-direction:column;gap:10px">
+                                <div class="skeleton" style="height:92px"></div>
+                                <div class="skeleton" style="height:92px"></div>
+                                <div class="skeleton" style="height:92px"></div>
+                            </div>
+                        </div>
+
+                        <div class="cart-bar" id="cartBar">
+                            <div class="cart-top">
+                                <span>รายการที่เลือก</span>
+                                <span class="cart-chip" id="cartCount"></span>
+                            </div>
+                            <div class="cart-rows" id="cartRows"></div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button type="button" class="btn btn-outline btn-icon" onclick="goToStep(1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button type="button" class="btn btn-primary" id="step2Btn" onclick="goToStep3()" disabled>
+                                ตรวจสอบรายการ
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── STEP 3: Confirm ── -->
+                    <div class="form-section" id="step-3">
+                        <div class="sec-label">ยืนยันการเบิกยา</div>
+
+                        <div class="confirm-block" id="cfPersonal"></div>
+                        <div class="confirm-block" id="cfSymptoms"></div>
+                        <div class="confirm-block" id="cfMeds"></div>
+
+                        <div class="btn-row">
+                            <button type="button" class="btn btn-outline btn-icon" onclick="goToStep(2)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                ✓ ยืนยันการเบิกยา
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Success -->
+                <div class="success-view" id="successView">
+                    <div class="success-ring">💊</div>
+                    <h2>บันทึกสำเร็จแล้ว</h2>
+                    <p>รายการเบิกยาของคุณถูกบันทึกเรียบร้อย<br>เภสัชกรจะจัดเตรียมยาให้ท่านต่อไป</p>
+                    <button class="btn btn-primary" style="max-width:240px;margin:0 auto;" onclick="resetForm()">
+                        ทำรายการใหม่
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         ADMIN LOGIN
+    ═══════════════════════════════ -->
+    <div id="admin-login-view">
+        <div class="auth-shell">
+            <div class="auth-head">
+                <h2>Admin Portal</h2>
                 <p>Pharmacy Management System</p>
             </div>
-            <div class="content">
-                <div class="form-group">
-                    <label>รหัสผ่าน</label>
-                    <input type="password" id="adminPass" placeholder="กรอกรหัสผ่านแล้วกด Enter" onkeypress="if(event.key === 'Enter') loginAdmin()">
+            <div class="auth-body">
+                <div class="field">
+                    <label class="field-label">รหัสผ่าน</label>
+                    <input type="password" id="adminPass" placeholder="••••••••••••"
+                           onkeypress="if(event.key==='Enter') loginAdmin()">
                 </div>
-                <button onclick="loginAdmin()" class="btn btn-submit">เข้าสู่ระบบ</button>
-                <div style="text-align: center; margin-top: 25px;">
-                    <a class="admin-link" style="color:var(--text-muted); cursor:pointer; font-size: 13px;" onclick="switchView('user-view')">← กลับไปหน้าทำรายการ</a>
-                </div>
+                <button type="button" class="btn btn-primary" onclick="loginAdmin()">เข้าสู่ระบบ</button>
+                <div class="back-lnk" onclick="switchView('user-view')">← กลับหน้าหลัก</div>
             </div>
         </div>
+    </div>
 
-        <div id="admin-dashboard-view">
-            <div class="header">
-                <h1>PHARMACY DASHBOARD</h1>
-                <p>จัดการคลังยา ประวัติ และ AI Report</p>
-            </div>
-            
-            <div class="admin-tabs">
-                <div class="admin-tab active" id="tab-stock" onclick="switchAdminTab('stock')">📦 คลังยา</div>
-                <div class="admin-tab" id="tab-history" onclick="switchAdminTab('history')">📜 ประวัติ</div>
-                <div class="admin-tab" id="tab-report" onclick="switchAdminTab('report')">✦ รายงาน AI</div>
+    <!-- ═══════════════════════════════
+         ADMIN DASHBOARD
+    ═══════════════════════════════ -->
+    <div id="admin-dashboard-view">
+        <div class="dash-shell">
+            <div class="dash-head">
+                <div class="dash-head-top">
+                    <div>
+                        <h2>Pharmacy Dashboard</h2>
+                        <p>จัดการคลังยา ประวัติบิล และรายงาน</p>
+                    </div>
+                    <button class="admin-pill-btn" onclick="switchView('user-view')" style="margin-top:2px;">🚪 ออก</button>
+                </div>
+                <div class="dash-tabs-nav">
+                    <div class="dtab active" id="dtab-stock" onclick="switchAdminTab('stock')">📦 คลังยา</div>
+                    <div class="dtab" id="dtab-history" onclick="switchAdminTab('history')">📜 ประวัติ</div>
+                    <div class="dtab" id="dtab-report" onclick="switchAdminTab('report')">✦ รายงาน</div>
+                </div>
             </div>
 
-            <div class="content" style="padding-top: 0;">
-                
-                <div id="admin-section-stock">
-                    <div class="admin-box">
-                        <h3 style="margin-top:0; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--secondary-color);" id="adminFormTitle">✦ เพิ่ม/แก้ไข รายการยา</h3>
-                        <div class="grid-2">
-                            <div class="form-group"><label>รหัสยา (เช่น M01)</label><input type="text" id="itemId"></div>
-                            <div class="form-group"><label>ชื่อยา (เช่น พอนสแตน แก้ปวด)</label><input type="text" id="itemName"></div>
+            <div class="dash-body">
+                <!-- Stock -->
+                <div class="dash-section active" id="dsec-stock">
+                    <div class="adm-form-card">
+                        <div class="adm-form-title" id="adminFormTitle">✦ เพิ่ม / แก้ไข รายการยา</div>
+                        <div class="field-row col-2">
+                            <div>
+                                <label class="field-label">รหัสยา</label>
+                                <input type="text" id="itemId" placeholder="M01">
+                            </div>
+                            <div>
+                                <label class="field-label">ชื่อยา</label>
+                                <input type="text" id="itemName" placeholder="ชื่อยา + อาการ">
+                            </div>
                         </div>
-                        <div class="grid-2">
-                            <div class="form-group"><label>หน่วยนับ</label><input type="text" id="itemUnit" value="เม็ด"></div>
-                            <div class="form-group"><label>จำนวนสต๊อกรวม</label><input type="number" id="itemStock" min="0"></div>
+                        <div class="field-row col-2">
+                            <div>
+                                <label class="field-label">หน่วยนับ</label>
+                                <input type="text" id="itemUnit" value="เม็ด">
+                            </div>
+                            <div>
+                                <label class="field-label">จำนวนสต๊อก</label>
+                                <input type="number" id="itemStock" min="0">
+                            </div>
                         </div>
-                        <div class="form-group"><label>URL รูปภาพ</label><input type="text" id="itemImage"></div>
-                        <div class="action-btns" style="margin-top: 15px;">
-                            <button onclick="saveItemAdmin()" id="btnSaveAdmin" class="btn btn-submit">💾 บันทึกข้อมูล</button>
-                            <button onclick="clearAdminForm()" class="btn" style="background-color: transparent; border: 1px solid var(--text-muted); width: 40%; color: var(--text-muted);">ล้างค่า</button>
+                        <div class="field" style="margin-bottom:14px">
+                            <label class="field-label">URL รูปภาพ</label>
+                            <input type="text" id="itemImage" placeholder="https://...">
+                        </div>
+                        <div class="btn-row">
+                            <button type="button" class="btn btn-primary" onclick="saveItemAdmin()">💾 บันทึก</button>
+                            <button type="button" class="btn btn-outline" onclick="clearAdminForm()">ล้างค่า</button>
                         </div>
                     </div>
-                    <h3 style="font-size: 16px; color: var(--secondary-color);">📦 สต๊อกยาคงเหลือ</h3>
+
+                    <div class="sec-label">สต๊อกยาคงเหลือ</div>
                     <div id="adminStockContainer"></div>
                 </div>
 
-                <div id="admin-section-history" style="display: none;">
-                    <div class="admin-box">
-                        <h3 style="margin-top:0; font-size: 16px; color: var(--danger-color);">🚨 ตรวจสอบและยกเลิกบิล</h3>
-                        <div id="adminHistoryContainer"></div>
-                    </div>
+                <!-- History -->
+                <div class="dash-section" id="dsec-history">
+                    <div id="adminHistoryContainer"></div>
                 </div>
 
-                <div id="admin-section-report" style="display: none;">
-                    <div class="admin-box">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h3 style="margin:0; font-size: 16px; color: var(--secondary-color);">✦ รายงานวิเคราะห์คลังยา</h3>
-                            <select id="reportMonthFilter" onchange="generateReport()" style="width: auto; padding: 6px 10px; font-weight: 600; border-color: var(--border-color);">
-                                <option value="all">ทั้งหมด (All Time)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="grid-2" style="margin-bottom: 20px;">
-                            <div class="summary-card">
-                                <div class="label">จำนวนบิลทั้งหมด</div>
-                                <div class="value" id="reportTotalOrders">0 <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">บิล</span></div>
-                            </div>
-                            <div class="summary-card">
-                                <div class="label">รวมรายการยาที่ถูกเบิก</div>
-                                <div class="value" id="reportTotalItems">0 <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">รายการ</span></div>
-                            </div>
-                        </div>
-                        
-                        <div class="ai-box" id="aiInsightBox">
-                            ✦ <b>AI Insight:</b> กำลังวิเคราะห์ข้อมูล...
-                        </div>
-                        
-                        <table class="report-table">
-                            <thead>
-                                <tr>
-                                    <th style="text-align: left;">ชื่อยา</th>
-                                    <th style="text-align: center;">ยอดเดิม</th>
-                                    <th style="text-align: center;">เบิกไป</th>
-                                    <th style="text-align: center;">คงเหลือ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="reportTableBody"></tbody>
-                        </table>
+                <!-- Report -->
+                <div class="dash-section" id="dsec-report">
+                    <div class="filter-row">
+                        <h3>รายงานคลังยา</h3>
+                        <select class="mini-sel" id="reportMonthFilter" onchange="generateReport()">
+                            <option value="all">All Time</option>
+                        </select>
                     </div>
-                </div>
 
-                <button onclick="switchView('user-view')" class="btn" style="background-color: var(--secondary-color); color: var(--primary-color); border: 1px solid var(--primary-color); margin-top: 20px;">🚪 ออกจากระบบ</button>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-lbl">จำนวนบิล</div>
+                            <div class="stat-val" id="reportTotalOrders">—<span class="stat-unit">บิล</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-lbl">รายการยาที่เบิก</div>
+                            <div class="stat-val" id="reportTotalItems">—<span class="stat-unit">รายการ</span></div>
+                        </div>
+                    </div>
+
+                    <div class="ai-box" id="aiInsightBox">
+                        ✦ <strong>AI Insight:</strong> กำลังวิเคราะห์ข้อมูล...
+                    </div>
+
+                    <table class="data-tbl">
+                        <thead>
+                            <tr>
+                                <th>ชื่อยา</th>
+                                <th style="text-align:center">เดิม</th>
+                                <th style="text-align:center">เบิก</th>
+                                <th style="text-align:center">คงเหลือ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
     </div>
+</div>
 
-    <script>
-        // ⚠️ วาง URL Web App ของระบบยาคุณที่นี่ครับ
-        const API_URL = "https://script.google.com/macros/s/AKfycbz4FjYkhq97CY8HNarHLArNX46Ye373ybRcXqdL5THySaT29ut0797YbMjamZeqaADZ/exec"; 
-        
-        let globalItems = [];
-        let globalHistory = [];
-        let currentCategoryFilter = 'all'; 
+<!-- ═══════════════════════════════
+     SCRIPTS
+═══════════════════════════════ -->
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbz4FjYkhq97CY8HNarHLArNX46Ye373ybRcXqdL5THySaT29ut0797YbMjamZeqaADZ/exec";
 
-        window.onload = function() { fetchItems(); };
+let globalItems   = [];
+let globalHistory = [];
+let currentCat    = 'all';
 
-        function fetchItems() {
-            fetch(API_URL)
-                .then(response => response.json())
-                .then(data => {
-                    globalItems = data.items;
-                    globalHistory = data.history;
-                    renderItems(); 
-                    renderAdminStock(globalItems);
-                    renderAdminHistory(globalHistory);
-                    populateMonthFilter();
-                    generateReport();
-                })
-                .catch(error => console.error("Error:", error));
+window.onload = () => fetchItems();
+
+/* ─── DATA ─── */
+function fetchItems() {
+    fetch(API_URL)
+        .then(r => r.json())
+        .then(data => {
+            globalItems   = data.items;
+            globalHistory = data.history;
+            renderMeds();
+            renderAdminStock(globalItems);
+            renderAdminHistory(globalHistory);
+            populateMonthFilter();
+            generateReport();
+        })
+        .catch(e => console.error(e));
+}
+
+/* ─── TOAST ─── */
+function showToast(msg, type = 'ok') {
+    const wrap = document.getElementById('toastWrap');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = (type === 'ok' ? '✓ ' : '✕ ') + msg;
+    wrap.appendChild(t);
+    setTimeout(() => t.remove(), 3100);
+}
+
+/* ─── STEP NAV ─── */
+function setStepUI(step) {
+    for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById(`psi-${i}`);
+        el.classList.remove('active','done');
+        const c = el.querySelector('.ps-circle');
+        if (i < step) {
+            el.classList.add('done');
+            c.innerHTML = '✓';
+        } else {
+            c.innerHTML = `<span>${i}</span>`;
+            if (i === step) el.classList.add('active');
         }
+    }
+    if (document.getElementById('psl-12'))
+        document.getElementById('psl-12').classList.toggle('done', step > 1);
+    if (document.getElementById('psl-23'))
+        document.getElementById('psl-23').classList.toggle('done', step > 2);
+}
 
-        // --- ระบบกรองหมวดหมู่ยาตามคำหลัก ---
-        function filterCategory(keyword, element) {
-            currentCategoryFilter = keyword;
-            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
-            element.classList.add('active');
-            renderItems();
+function goToStep(n) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${n}`).classList.add('active');
+    setStepUI(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToStep2() {
+    if (!document.getElementById('fullName').value.trim()
+     || !document.getElementById('nickName').value.trim()
+     || !document.getElementById('position').value.trim()
+     || !document.getElementById('department').value
+     || !document.getElementById('symptoms').value.trim()) {
+        showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'err');
+        return;
+    }
+    goToStep(2);
+}
+
+function goToStep3() {
+    buildConfirm();
+    goToStep(3);
+}
+
+/* ─── SYMPTOMS QUICK TAGS ─── */
+function addSymptom(el) {
+    el.classList.toggle('active');
+    const tags = [...document.querySelectorAll('.sym-tag.active')].map(t => t.textContent.trim());
+    document.getElementById('symptoms').value = tags.join(', ');
+}
+
+/* ─── MEDICINES RENDER ─── */
+function filterCat(kw, el) {
+    currentCat = kw;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderMeds();
+}
+
+function renderMeds() {
+    const grid = document.getElementById('medGrid');
+    const items = currentCat === 'all' ? globalItems
+        : globalItems.filter(i => i.name.includes(currentCat));
+
+    if (!items.length) {
+        grid.innerHTML = `<div class="empty-state">ไม่พบรายการยาในหมวดหมู่นี้</div>`;
+        return;
+    }
+
+    grid.innerHTML = items.map(item => {
+        const oos = item.stock <= 0;
+        const low = !oos && item.stock <= 10;
+        const stockClass = oos ? 'none' : (low ? 'low' : 'ok');
+        const stockText  = oos ? 'ยาหมด' : `${item.stock} ${item.unit}`;
+        const img = item.image || `https://via.placeholder.com/64/EBF4F6/0B8A94?text=💊`;
+
+        return `
+        <div class="med-card ${oos ? 'oos' : ''}" id="mc-${item.id}">
+            <img class="med-img" src="${img}" alt="${item.name}"
+                 onerror="this.src='https://via.placeholder.com/64/EBF4F6/0EA5B0?text=💊'">
+            <div>
+                <div class="med-name">${item.name}</div>
+                <div class="med-stock ${stockClass}">
+                    <span class="sdot"></span>${stockText}
+                </div>
+            </div>
+            <div class="qty-wrap">
+                <button type="button" class="q-btn" onclick="chg('${item.id}',-1)" ${oos?'disabled':''}>−</button>
+                <input type="number" class="q-input app-input"
+                    id="qi-${item.id}"
+                    data-name="${item.name}"
+                    data-unit="${item.unit}"
+                    data-id="${item.id}"
+                    min="0" max="${item.stock}" value="0"
+                    ${oos ? 'disabled' : ''}
+                    oninput="onQtyChange('${item.id}')">
+                <button type="button" class="q-btn" onclick="chg('${item.id}',1)" ${oos?'disabled':''}>+</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function chg(id, delta) {
+    const inp = document.getElementById(`qi-${id}`);
+    if (!inp) return;
+    let v = Math.max(0, Math.min(parseInt(inp.max)||0, (parseInt(inp.value)||0) + delta));
+    inp.value = v;
+    onQtyChange(id);
+}
+
+function onQtyChange(id) {
+    const inp  = document.getElementById(`qi-${id}`);
+    const card = document.getElementById(`mc-${id}`);
+    if (inp && card) card.classList.toggle('selected', (parseInt(inp.value)||0) > 0);
+    updateCart();
+}
+
+function updateCart() {
+    const inputs = document.querySelectorAll('.app-input');
+    const chosen = [];
+    inputs.forEach(i => { const q = parseInt(i.value)||0; if(q>0) chosen.push({name:i.dataset.name,qty:q,unit:i.dataset.unit}); });
+
+    const bar  = document.getElementById('cartBar');
+    const rows = document.getElementById('cartRows');
+    const btn  = document.getElementById('step2Btn');
+
+    if (!chosen.length) { bar.classList.remove('show'); btn.disabled = true; return; }
+    bar.classList.add('show');
+    btn.disabled = false;
+    document.getElementById('cartCount').textContent = chosen.reduce((s,i) => s+i.qty, 0) + ' รายการ';
+    rows.innerHTML = chosen.map(i => `<div class="cart-row"><span>${i.name}</span><b>${i.qty} ${i.unit}</b></div>`).join('');
+}
+
+/* ─── CONFIRM ─── */
+function buildConfirm() {
+    const dept = document.getElementById('department').value === 'อื่นๆ'
+        ? document.getElementById('otherDepartment').value
+        : document.getElementById('department').value;
+
+    document.getElementById('cfPersonal').innerHTML = `
+        <div class="confirm-title">✦ ข้อมูลพนักงาน</div>
+        <div class="confirm-row"><span class="ck">ชื่อ-นามสกุล</span><span class="cv">${document.getElementById('fullName').value}</span></div>
+        <div class="confirm-row"><span class="ck">ชื่อเล่น</span><span class="cv">${document.getElementById('nickName').value}</span></div>
+        <div class="confirm-row"><span class="ck">ตำแหน่ง</span><span class="cv">${document.getElementById('position').value}</span></div>
+        <div class="confirm-row"><span class="ck">แผนก</span><span class="cv">${dept}</span></div>
+    `;
+
+    document.getElementById('cfSymptoms').innerHTML = `
+        <div class="confirm-title">🩺 อาการเบื้องต้น</div>
+        <div class="confirm-symptoms">${document.getElementById('symptoms').value}</div>
+    `;
+
+    const inputs = document.querySelectorAll('.app-input');
+    let medRows = '';
+    inputs.forEach(inp => {
+        const q = parseInt(inp.value)||0;
+        if (q > 0) medRows += `<div class="confirm-row"><span class="ck">${inp.dataset.name}</span><span class="cv">${q} ${inp.dataset.unit}</span></div>`;
+    });
+    document.getElementById('cfMeds').innerHTML = `<div class="confirm-title">💊 รายการยา</div>${medRows}`;
+}
+
+/* ─── SUBMIT ─── */
+document.getElementById('medForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const btn    = document.getElementById('submitBtn');
+    const inputs = document.querySelectorAll('.app-input');
+    const items  = [];
+    inputs.forEach(inp => { const q = parseInt(inp.value)||0; if(q>0) items.push({name:inp.dataset.name,qty:q}); });
+    if (!items.length) { showToast('กรุณาเลือกยาอย่างน้อย 1 รายการ','err'); return; }
+
+    const dept = document.getElementById('department').value === 'อื่นๆ'
+        ? document.getElementById('otherDepartment').value
+        : document.getElementById('department').value;
+
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg> กำลังบันทึก...';
+    btn.disabled = true;
+
+    const payload = {
+        action: "request_items",
+        fullName:        document.getElementById('fullName').value,
+        nickName:        document.getElementById('nickName').value,
+        position:        document.getElementById('position').value,
+        department:      dept,
+        otherDepartment: '',
+        symptoms:        document.getElementById('symptoms').value,
+        itemsDataArray:  items
+    };
+
+    fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === "success") {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelector('.progress-bar-wrap').style.display = 'none';
+            document.getElementById('successView').classList.add('show');
+            fetchItems();
         }
+    })
+    .catch(() => showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'err'))
+    .finally(() => {
+        btn.innerHTML = '✓ ยืนยันการเบิกยา';
+        btn.disabled  = false;
+    });
+});
 
-        function renderItems() {
-            const container = document.getElementById("itemListContainer");
-            container.innerHTML = ""; 
+/* ─── RESET ─── */
+function resetForm() {
+    document.getElementById('medForm').reset();
+    document.getElementById('successView').classList.remove('show');
+    document.querySelector('.progress-bar-wrap').style.display = '';
+    document.querySelectorAll('.sym-tag').forEach(t => t.classList.remove('active'));
+    currentCat = 'all';
+    document.querySelectorAll('.cat-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+    checkDepartment();
+    goToStep(1);
+}
 
-            let displayItems = globalItems;
-            if (currentCategoryFilter !== 'all') {
-                displayItems = globalItems.filter(item => item.name.includes(currentCategoryFilter));
-            }
+/* ─── ADMIN ─── */
+function renderAdminStock(items) {
+    const c = document.getElementById('adminStockContainer');
+    c.innerHTML = items.map(item => {
+        const cls = item.stock <= 0 ? 'chip-none' : (item.stock <= 10 ? 'chip-low' : 'chip-ok');
+        const json = JSON.stringify(item).replace(/'/g,"&#39;");
+        return `
+        <div class="stock-row">
+            <div class="stock-info">
+                <div class="stock-id">${item.id}</div>
+                <div class="stock-name">${item.name}</div>
+            </div>
+            <span class="stock-chip ${cls}">${item.stock} ${item.unit}</span>
+            <div class="action-sm">
+                <button onclick='editItem(${json})' class="btn-mini">✏</button>
+                <button onclick="deleteItem('${item.id}','${item.name}')" class="btn-mini del">🗑</button>
+            </div>
+        </div>`;
+    }).join('');
+}
 
-            if (displayItems.length === 0) { 
-                container.innerHTML = `<div class="loading-text" style="color:var(--text-muted);">ไม่พบรายการยาในหมวดหมู่นี้ครับ</div>`; 
-                return; 
-            }
+function renderAdminHistory(recs) {
+    const c = document.getElementById('adminHistoryContainer');
+    if (!recs.length) { c.innerHTML = '<div class="empty-state">ยังไม่มีประวัติการทำรายการ</div>'; return; }
+    c.innerHTML = recs.map(rec => {
+        const d = new Date(rec.timestamp).toLocaleString('th-TH');
+        return `
+        <div class="hist-item">
+            <div class="hist-top">
+                <div>
+                    <div class="hist-id">${rec.orderId}</div>
+                    <div class="hist-meta">📅 ${d} · 👤 ${rec.name}</div>
+                </div>
+                <button onclick="cancelOrder('${rec.orderId}',${rec.rowIdx})" class="btn-mini del">ยกเลิก</button>
+            </div>
+            <div class="hist-body">${rec.summary}</div>
+        </div>`;
+    }).join('');
+}
 
-            displayItems.forEach((item) => {
-                const imgUrl = item.image ? item.image : `https://via.placeholder.com/150/0F0F0F/D4AF37?text=${item.name}`;
-                const isOutOfStock = item.stock <= 0;
-                container.innerHTML += `
-                    <div class="item-card" style="${isOutOfStock ? 'opacity: 0.6;' : ''}">
-                        <img src="${imgUrl}" alt="${item.name}">
-                        <div class="item-info">
-                            <div class="item-name">${item.name}</div>
-                            <div class="item-stock" style="${isOutOfStock ? 'color: var(--danger-color);' : 'color: var(--success-color); font-weight: 500;'}">
-                                ${isOutOfStock ? 'ยาหมด' : 'คงเหลือ: ' + item.stock + ' ' + item.unit}
-                            </div>
-                        </div>
-                        <input type="number" class="item-qty app-input" data-name="${item.name}" data-unit="${item.unit}" min="0" max="${item.stock}" placeholder="จำนวน" ${isOutOfStock ? 'disabled' : ''}>
-                    </div>
-                `;
-            });
+function cancelOrder(orderId, rowIdx) {
+    if (!confirm(`⚠️ ยืนยันยกเลิกบิล ${orderId} และคืนยาเข้าสต๊อก?`)) return;
+    fetch(API_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action:"cancel_order",orderId,rowIdx}) })
+    .then(r => r.json())
+    .then(data => { if(data.status==="success") { showToast(data.message); fetchItems(); } else showToast('เกิดข้อผิดพลาด','err'); });
+}
+
+/* ─── REPORT ─── */
+function populateMonthFilter() {
+    const sel = document.getElementById('reportMonthFilter');
+    sel.innerHTML = '<option value="all">All Time</option>';
+    const months = new Set();
+    globalHistory.forEach(r => { const d = new Date(r.timestamp); months.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`); });
+    const mn = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+    [...months].sort().reverse().forEach(m => {
+        const [y, mo] = m.split('-');
+        sel.innerHTML += `<option value="${m}">${mn[parseInt(mo)-1]} ${y}</option>`;
+    });
+}
+
+function generateReport() {
+    const filter = document.getElementById('reportMonthFilter').value;
+    const stats  = {};
+    globalItems.forEach(i => { stats[i.name] = {original:0,allTime:0,period:0,remaining:parseInt(i.stock),unit:i.unit}; });
+    globalHistory.forEach(rec => { if(rec.rawItems) try { JSON.parse(rec.rawItems).forEach(i => { if(stats[i.name]) stats[i.name].allTime += parseInt(i.qty); }); } catch(e){} });
+    for (const k in stats) stats[k].original = stats[k].remaining + stats[k].allTime;
+
+    const filtered = globalHistory.filter(rec => {
+        if (filter === 'all') return true;
+        const d = new Date(rec.timestamp);
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` === filter;
+    });
+
+    let totalOrders = filtered.length, totalItems = 0;
+    filtered.forEach(rec => { if(rec.rawItems) try { JSON.parse(rec.rawItems).forEach(i => { if(stats[i.name]) { stats[i.name].period += parseInt(i.qty); totalItems += parseInt(i.qty); } }); } catch(e){} });
+
+    document.getElementById('reportTotalOrders').innerHTML = `${totalOrders}<span class="stat-unit">บิล</span>`;
+    document.getElementById('reportTotalItems').innerHTML  = `${totalItems}<span class="stat-unit">รายการ</span>`;
+
+    const tbody = document.getElementById('reportTableBody');
+    tbody.innerHTML = '';
+    let maxD = 0, topItem = '-';
+
+    for (const k in stats) {
+        const s = stats[k];
+        if (s.period > maxD) { maxD = s.period; topItem = k; }
+        if (s.original > 0) {
+            tbody.innerHTML += `<tr>
+                <td style="font-weight:600">${k}</td>
+                <td style="text-align:center;color:var(--text-sub)">${s.original}</td>
+                <td style="text-align:center;font-weight:700;color:var(--red)">${s.period}</td>
+                <td style="text-align:center;font-weight:700;color:var(--green)">${s.remaining}</td>
+            </tr>`;
         }
+    }
 
-        function submitForm(event) {
-            event.preventDefault(); 
-            const submitBtn = document.getElementById("submitBtn");
-            const inputs = document.querySelectorAll('.app-input');
-            let itemsDataArray = [];
+    const ai = document.getElementById('aiInsightBox');
+    if (!totalOrders) {
+        ai.innerHTML = '✦ <strong>AI Insight:</strong> ยังไม่มีข้อมูลการทำรายการ';
+    } else {
+        const rem  = stats[topItem]?.remaining || 0;
+        const warn = rem <= 10
+            ? `<br><span style="color:var(--amber)">⚠ ยา <strong>${topItem}</strong> สต๊อกเหลือ ${rem} ${stats[topItem]?.unit} — ควรเติมยาด่วน</span>`
+            : `<br>✅ สต๊อกยาอยู่ในระดับปกติ`;
+        ai.innerHTML = `✦ <strong>AI Insight:</strong> ยาที่จ่ายบ่อยที่สุด: <strong>${topItem}</strong> (${maxD} ครั้ง)${warn}`;
+    }
+}
 
-            inputs.forEach(input => {
-                let qty = parseInt(input.value);
-                if (qty > 0) itemsDataArray.push({ name: input.getAttribute('data-name'), qty: qty });
-            });
+/* ─── ADMIN FORM ─── */
+function editItem(item) {
+    document.getElementById('itemId').value    = item.id;
+    document.getElementById('itemId').readOnly = true;
+    document.getElementById('itemName').value  = item.name;
+    document.getElementById('itemUnit').value  = item.unit;
+    document.getElementById('itemStock').value = item.stock;
+    document.getElementById('itemImage').value = item.image;
+    switchAdminTab('stock');
+}
 
-            if (itemsDataArray.length === 0) return alert("กรุณาระบุจำนวนยาที่ต้องการเบิกครับ");
+function clearAdminForm() {
+    ['itemId','itemName','itemImage'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('itemId').readOnly = false;
+    document.getElementById('itemUnit').value  = 'เม็ด';
+    document.getElementById('itemStock').value = '';
+}
 
-            const payload = {
-                action: "request_items", 
-                fullName: document.getElementById("fullName").value,
-                nickName: document.getElementById("nickName").value,
-                position: document.getElementById("position").value,
-                department: document.getElementById("department").value,
-                otherDepartment: document.getElementById("otherDepartment").value,
-                symptoms: document.getElementById("symptoms").value,
-                itemsDataArray: itemsDataArray
-            };
+function saveItemAdmin() {
+    const id   = document.getElementById('itemId').value;
+    const name = document.getElementById('itemName').value;
+    if (!id || !name) { showToast('กรุณากรอกรหัสและชื่อยา','err'); return; }
+    fetch(API_URL, {
+        method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body: JSON.stringify({ action:"save_item", item:{ id, name,
+            unit:  document.getElementById('itemUnit').value  || 'เม็ด',
+            stock: document.getElementById('itemStock').value || 0,
+            image: document.getElementById('itemImage').value || ''
+        }})
+    })
+    .then(r => r.json())
+    .then(data => { if(data.status==="success") { showToast(data.message); clearAdminForm(); fetchItems(); } });
+}
 
-            submitBtn.innerText = "✦ กำลังดำเนินการ..."; submitBtn.disabled = true;
+function deleteItem(itemId, itemName) {
+    if (!confirm(`ลบยา "${itemName}" ออกจากระบบ?`)) return;
+    fetch(API_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action:"delete_item",itemId}) })
+    .then(r => r.json())
+    .then(data => { if(data.status==="success") { showToast(data.message); fetchItems(); } });
+}
 
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("✦ บันทึกการเบิกยาเรียบร้อยแล้ว!");
-                    document.getElementById("medicineForm").reset(); 
-                    checkDepartment(); fetchItems(); 
-                }
-            })
-            .finally(() => { submitBtn.innerText = "ยืนยันการเบิกยา"; submitBtn.disabled = false; });
-        }
+/* ─── UI HELPERS ─── */
+function switchAdminTab(tab) {
+    document.querySelectorAll('.dtab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`dtab-${tab}`).classList.add('active');
+    document.getElementById(`dsec-${tab}`).classList.add('active');
+}
 
-        // --- ส่วนของแอดมิน ---
-        function renderAdminStock(items) {
-            const container = document.getElementById("adminStockContainer");
-            container.innerHTML = "";
-            items.forEach(item => {
-                const itemJson = JSON.stringify(item).replace(/'/g, "&#39;");
-                container.innerHTML += `
-                <div class="admin-list-item">
-                    <div class="admin-item-header">
-                        <div style="font-weight: 600; color: var(--secondary-color);">[${item.id}] ${item.name}</div>
-                        <div class="action-btns">
-                            <button onclick='editItem(${itemJson})' class="btn-small btn-edit">✏️ แก้ไข</button>
-                            <button onclick="deleteItem('${item.id}', '${item.name}')" class="btn-small btn-delete">🗑️ ลบ</button>
-                        </div>
-                    </div>
-                    <div style="font-size: 13px; color: var(--text-muted);">สต๊อก: <strong style="color:var(--success-color); font-size: 15px;">${item.stock}</strong> ${item.unit}</div>
-                </div>`;
-            });
-        }
+function switchView(viewId) {
+    ['user-view','admin-login-view','admin-dashboard-view']
+        .forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById(viewId).style.display = 'block';
+    if (viewId === 'admin-dashboard-view') fetchItems();
+}
 
-        function renderAdminHistory(historyRecords) {
-            const container = document.getElementById("adminHistoryContainer");
-            container.innerHTML = "";
-            if (historyRecords.length === 0) { container.innerHTML = '<div class="loading-text">ยังไม่มีประวัติการทำรายการ</div>'; return; }
+function loginAdmin() {
+    if (document.getElementById('adminPass').value === 'adminhr0208') {
+        document.getElementById('adminPass').value = '';
+        switchView('admin-dashboard-view');
+    } else {
+        showToast('รหัสผ่านไม่ถูกต้อง','err');
+    }
+}
 
-            historyRecords.forEach(rec => {
-                let dateStr = new Date(rec.timestamp).toLocaleString('th-TH');
-                container.innerHTML += `
-                <div class="admin-list-item" style="border-left: 4px solid var(--primary-color);">
-                    <div class="admin-item-header">
-                        <div style="font-weight: 600; font-size: 14px; color: var(--secondary-color);">บิล: ${rec.orderId}</div>
-                        <button onclick="cancelOrder('${rec.orderId}', ${rec.rowIdx})" class="btn-small btn-delete">❌ ยกเลิกบิล (คืนสต๊อก)</button>
-                    </div>
-                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">📅 ${dateStr} | 👤 ${rec.name}</div>
-                    <div class="history-text">${rec.summary}</div>
-                </div>`;
-            });
-        }
-
-        function cancelOrder(orderId, rowIdx) {
-            if(!confirm(`⚠️ ยืนยันการยกเลิกบิลยา ${orderId} และคืนยอดเข้าสต๊อก?`)) return;
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "cancel_order", orderId: orderId, rowIdx: rowIdx }) })
-            .then(res => res.json())
-            .then(data => { if(data.status === "success") { alert("✦ " + data.message); fetchItems(); } else { alert("❌ เกิดข้อผิดพลาด"); } });
-        }
-
-        // --- ระบบสรุปรายงาน AI (AI Report) ---
-        function populateMonthFilter() {
-            let select = document.getElementById("reportMonthFilter");
-            select.innerHTML = '<option value="all">ทั้งหมด (All Time)</option>';
-            let months = new Set();
-            globalHistory.forEach(rec => {
-                let d = new Date(rec.timestamp);
-                months.add(d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0'));
-            });
-            let sortedMonths = Array.from(months).sort().reverse();
-            const monthNames = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            sortedMonths.forEach(m => {
-                let [year, month] = m.split("-");
-                select.innerHTML += `<option value="${m}">${monthNames[parseInt(month) - 1]} ${year}</option>`;
-            });
-        }
-
-        function generateReport() {
-            const filter = document.getElementById("reportMonthFilter").value;
-            let itemStats = {};
-            globalItems.forEach(item => { itemStats[item.name] = { original: 0, deductedAllTime: 0, deductedPeriod: 0, remaining: parseInt(item.stock), unit: item.unit }; });
-
-            globalHistory.forEach(rec => {
-                if (rec.rawItems) {
-                    try { JSON.parse(rec.rawItems).forEach(i => { if (itemStats[i.name]) itemStats[i.name].deductedAllTime += parseInt(i.qty); }); } catch(e) {}
-                }
-            });
-
-            for (let key in itemStats) itemStats[key].original = itemStats[key].remaining + itemStats[key].deductedAllTime;
-
-            let filteredHistory = globalHistory.filter(rec => {
-                if (filter === "all") return true;
-                let d = new Date(rec.timestamp);
-                return (d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0')) === filter;
-            });
-
-            let totalOrders = filteredHistory.length;
-            let totalItemsDeducted = 0;
-
-            filteredHistory.forEach(rec => {
-                if (rec.rawItems) {
-                    try { JSON.parse(rec.rawItems).forEach(i => { if (itemStats[i.name]) { itemStats[i.name].deductedPeriod += parseInt(i.qty); totalItemsDeducted += parseInt(i.qty); } }); } catch(e) {}
-                }
-            });
-
-            document.getElementById("reportTotalOrders").innerHTML = `${totalOrders} <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">บิล</span>`;
-            document.getElementById("reportTotalItems").innerHTML = `${totalItemsDeducted} <span style="font-size: 14px; font-weight: normal; color: var(--text-main);">รายการ</span>`;
-
-            let tbody = document.getElementById("reportTableBody");
-            tbody.innerHTML = "";
-            let maxDeducted = 0; let topItem = "-";
-
-            for (let key in itemStats) {
-                let stat = itemStats[key];
-                if (stat.deductedPeriod > maxDeducted) { maxDeducted = stat.deductedPeriod; topItem = key; }
-                if (stat.original > 0) {
-                    tbody.innerHTML += `<tr><td style="font-weight: 500;">${key}</td><td style="text-align: center; color: var(--text-muted);">${stat.original}</td><td style="text-align: center; font-weight: 600; color: var(--danger-color);">${stat.deductedPeriod}</td><td style="text-align: center; font-weight: 600; color: var(--success-color);">${stat.remaining}</td></tr>`;
-                }
-            }
-
-            let aiBox = document.getElementById("aiInsightBox");
-            if (totalOrders === 0) { aiBox.innerHTML = "✦ <b>AI Insight:</b> ยังไม่มีข้อมูลการทำรายการครับ"; } 
-            else {
-                let insightText = `✦ <b>AI Insight:</b> ยาที่มีการเบิกบ่อยที่สุดคือ <b>${topItem}</b> มีการจ่ายไปแล้ว ${maxDeducted} ${itemStats[topItem].unit} `;
-                let topItemRemaining = itemStats[topItem] ? itemStats[topItem].remaining : 0;
-                if (topItemRemaining <= 10) insightText += `<br><span style="color:var(--danger-color);">⚠️ <b>คำแนะนำ:</b> สต๊อกเหลือน้อยกว่ากำหนด (${topItemRemaining} ${itemStats[topItem].unit}) ควรเติมยาเข้าตู้ด่วนครับ!</span>`;
-                else insightText += `<br>✅ สภาพคล่องของสต๊อกยาอยู่ในเกณฑ์มาตรฐานครับ`;
-                aiBox.innerHTML = insightText;
-            }
-        }
-
-        // --- UI & Admin Form ---
-        function editItem(item) {
-            document.getElementById("itemId").value = item.id;
-            document.getElementById("itemId").readOnly = true; 
-            document.getElementById("itemName").value = item.name;
-            document.getElementById("itemUnit").value = item.unit;
-            document.getElementById("itemStock").value = item.stock;
-            document.getElementById("itemImage").value = item.image;
-        }
-
-        function clearAdminForm() {
-            document.getElementById("itemId").value = "";
-            document.getElementById("itemId").readOnly = false;
-            document.getElementById("itemName").value = "";
-            document.getElementById("itemUnit").value = "เม็ด";
-            document.getElementById("itemStock").value = "";
-            document.getElementById("itemImage").value = "";
-        }
-
-        function saveItemAdmin() {
-            const id = document.getElementById("itemId").value;
-            const name = document.getElementById("itemName").value;
-            if(!id || !name) return alert("กรุณากรอกรหัสและชื่อยา");
-            const payload = { action: "save_item", item: { id: id, name: name, unit: document.getElementById("itemUnit").value || "เม็ด", stock: document.getElementById("itemStock").value || 0, image: document.getElementById("itemImage").value || "" } };
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-            .then(res => res.json()).then(data => { if(data.status === "success") { alert("✦ " + data.message); clearAdminForm(); fetchItems(); } });
-        }
-
-        function deleteItem(itemId, itemName) {
-            if(!confirm(`ต้องการลบยา "${itemName}" ออกจากระบบ?`)) return;
-            fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "delete_item", itemId: itemId }) })
-            .then(res => res.json()).then(data => { if(data.status === "success") { alert("🗑️ " + data.message); fetchItems(); } });
-        }
-
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('#admin-dashboard-view > .content > div').forEach(el => el.style.display = 'none');
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.getElementById('admin-section-' + tab).style.display = 'block';
-        }
-
-        function checkDepartment() { document.getElementById("otherDeptDiv").style.display = document.getElementById("department").value === "อื่นๆ" ? "block" : "none"; }
-
-        function switchView(viewId) {
-            document.getElementById("user-view").style.display = "none";
-            document.getElementById("admin-login-view").style.display = "none";
-            document.getElementById("admin-dashboard-view").style.display = "none";
-            document.getElementById(viewId).style.display = "block";
-            if (viewId === 'admin-dashboard-view') fetchItems();
-        }
-
-        function loginAdmin() {
-            if (document.getElementById("adminPass").value === "adminhr0208") {
-                document.getElementById("adminPass").value = ""; 
-                switchView("admin-dashboard-view");
-            } else { alert("รหัสผ่านไม่ถูกต้อง"); }
-        }
-    </script>
+function checkDepartment() {
+    document.getElementById('otherDeptDiv').style.display =
+        document.getElementById('department').value === 'อื่นๆ' ? 'block' : 'none';
+}
+</script>
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
